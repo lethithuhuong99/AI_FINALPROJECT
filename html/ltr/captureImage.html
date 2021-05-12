@@ -1,0 +1,17 @@
+<html>
+
+    <h1>HUONG</h1>
+    <form action="/capture" , method="post">
+      <label for="Id">Id:</label>
+      <input type="text" id="Id" name="Id">
+      <input type="submit" value="Submit" name = 'Submit'>
+    </form>
+    {% if(IsCapture == True) %}
+
+        <h1>Hello Luyn</h1>
+        <img src="{{ url_for('video') }}">
+    <br>
+        <a href="{{ url_for('TrainImages') }}">Train Image</a>
+    {%endif%}
+</html>
+
