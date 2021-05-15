@@ -343,7 +343,7 @@ def captureImage():
                 # saving the captured face in the dataset folder TrainingImage
                 cv2.imwrite("TrainingImage" + os.sep + Id +'.' +
                             str(sampleNum) + ".jpg", gray[y:y + h, x:x + w])
-                print(str(sampleNum))
+                print('Captured Image: ' + str(sampleNum))
                 # display the frame
                 # cv2.imshow('frame', img)
             #open camera flask

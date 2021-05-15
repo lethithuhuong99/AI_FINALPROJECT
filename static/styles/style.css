@@ -349,3 +349,9 @@ div.dataTables_wrapper div.dataTables_filter label{
 .col-12 col-md-10 d-none d-xl-block{
   margin-bottom: 120px;
 }
+
+.menu.scrolled {
+  background-color: rgb(0,0,0);
+  padding: 10px 0;
+  transition: background-color 200ms linear;
+}
