@@ -88,7 +88,8 @@
                         <td>{{ listEmp[i].phoneNumber }}</td>
                         <td>{{ listEmp[i].position }}</td>
                         <td class="d-flex justify-content-between">
-                           <button type="button" class="btn btn-sm btn-outline-primary" onclick="window.location.href='{{ url_for('update_employee',  id = listEmp[i].id ) }}';"><i class="fas fa-edit" ></i></button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="window.location.href='{{ url_for('update_employee',  id = listEmp[i].id ) }}';"><i class="fas fa-edit" ></i></button>
+                            <button type="button" class="btn btn-outline-success" onclick="window.location.href='{{ url_for('update_images',  id = listEmp[i].id ) }}';"><i class="fas fa-camera"></i></button>
                             <button type="button" class="btn btn-sm btn-outline-danger" onclick="window.location.href='{{ url_for('delete_employee',  id = listEmp[i].id ) }}';"><i class="fas fa-trash-alt"></i></button>
                         </td>
                     </tr>

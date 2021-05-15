@@ -343,7 +343,7 @@ def captureImage():
                 # saving the captured face in the dataset folder TrainingImage
                 cv2.imwrite("TrainingImage" + os.sep + Id +'.' +
                             str(sampleNum) + ".jpg", gray[y:y + h, x:x + w])
-                print('Captured Image: ' + str(sampleNum))
+                print(str(sampleNum))
                 # display the frame
                 # cv2.imshow('frame', img)
             #open camera flask
@@ -364,7 +364,7 @@ def captureImage():
 
 #Form to fill Id
 IsCapture = False
-@app.route('/create-employee',  methods=['GET', 'POST'])
+@app.route('/capture-image',  methods=['GET', 'POST'])
 def captureVideo():
     global IsCapture
     IsCapture = True
@@ -386,8 +386,23 @@ def captureVideo():
         }
         listEmployeesCol.insert_one(employeeInfor)
         if is_number(Id):
-            print(Id)
-            return render_template('createEmployee.html',IsCapture = True)
+            return render_template('captureImage.html',empUpInfor=employeeInfor)
+
+
+@app.route('/update-images/<id>')
+def update_images(id):
+    print(id)
+    empUpId = {"id": id}
+    empUp = listEmployeesCol.find(empUpId)
+    for x in empUp:
+        empUpInfor = x
+
+    global Id
+    Id = str(id)
+
+    # you can use the the rowData from template
+    if is_number(Id):
+        return render_template('captureImage.html', empUpInfor=empUpInfor)
 
 
 def getImagesAndLabels(path):
