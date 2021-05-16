@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
     <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
         <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
 
 </head>
 <body class="container pt-4 imageCreate">
@@ -16,10 +17,10 @@
     <h1 class="text-center" style="color: white">Update Employee</h1>
     <div class=" mt-2 mb-2 ">
         <div class="container buttonEmployee">
-          <a href="{{ url_for('list_employees') }}" class="btnEmployee">Employees</a>
+            <a href="{{ url_for('list_employees') }}" class="btnEmployee" style="color: white"> <i class="fas fa-angle-left"></i> <i class="fas fa-angle-left"></i> Employees</a>
         </div>
     </div>
-    <div class="container">
+    <div class="container imageCreateForm">
         <form action="/updated-employee/{{empUpInfor.id}}" , method="post" id="updateForm">
       <div class="form-group row">
         <label for="Id" class="col-sm-2 col-form-label">Id</label>

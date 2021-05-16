@@ -366,15 +366,22 @@ div.dataTables_wrapper div.dataTables_filter label{
   min-height: 300px;
   /*height: 100%;*/
   /* Center and scale the image nicely */
-  background-position: center;
+  /*background-position: center;*/
   background-size: cover;
+  background-attachment: fixed;
+
   position: relative;
-  width: 65%!important;
-  border: 2px solid white;
-  border-radius: 10px;
   /*margin-top: 10px;*/
   background-image: linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)) , url('/static/images/image2.jpeg');
+}
 
+.imageCreateForm{
+  width: 85%!important;
+  border: 2px solid white;
+  border-radius: 10px;
+  padding: 50px;
+  margin-bottom: 50px;
+  margin-top: 20px;
 }
 
 .col-form-label{
@@ -401,8 +408,9 @@ i.gj-icon{
   min-height: 300px;
   /*height: 100%;*/
   /* Center and scale the image nicely */
-  background-position: center;
+  /*background-position: center;*/
   background-size: cover;
+  background-attachment: fixed;
   position: relative;
 }
 
