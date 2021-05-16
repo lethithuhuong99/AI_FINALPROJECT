@@ -157,8 +157,8 @@ def recognize_attendence():
         im = cv2.flip(im,1)
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         now = datetime.datetime.now()
-        hour = 20
-        minute = 31
+        hour = 19
+        minute = 39
         startCheckIn = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
         endCheckIn = now.replace(hour=hour, minute=minute, second=20, microsecond=0)
         startCheckOut = now.replace(hour=hour, minute=minute, second=30, microsecond=0)
@@ -350,7 +350,7 @@ def captureImage():
             imgencode = cv2.imencode('.jpg', img)[1]
             strinData = imgencode.tostring()
             yield (b'--frame\r\n'b'Content-Type: text/plain\r\n\r\n' + strinData + b'\r\n')
-            if sampleNum > 5:
+            if sampleNum > 50:
                 break
         cam.release()
         cv2.destroyAllWindows()

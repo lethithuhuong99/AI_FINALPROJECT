@@ -2,7 +2,11 @@ body {
   font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   background-color: #fff;
   height: 100%;
-  position: relative; }
+  position: relative;
+    /*display: flex;*/
+  align-items: center;
+  justify-content: center;
+}
   body:before {
     content: "";
     position: absolute;
@@ -354,4 +358,247 @@ div.dataTables_wrapper div.dataTables_filter label{
   background-color: rgb(0,0,0);
   padding: 10px 0;
   transition: background-color 200ms linear;
+}
+
+.imageCreate {
+  /* The image used */
+  background-image: url('/static/images/image2.jpeg');
+  min-height: 300px;
+  /*height: 100%;*/
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-size: cover;
+  position: relative;
+  width: 65%!important;
+  border: 2px solid white;
+  border-radius: 10px;
+  /*margin-top: 10px;*/
+  background-image: linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)) , url('/static/images/image2.jpeg');
+
+}
+
+.col-form-label{
+  color: white;
+}
+
+i.gj-icon{
+  color: white;
+}
+
+.captureImage{
+    width: 60%!important;
+    border: 2px solid white;
+    border-radius: 10px;
+    padding: 50px;
+  margin-top: 15px;
+    /* padding-bottom: 10px; */
+    margin-bottom: 30px;
+}
+
+.captureImageBackground{
+    background-image: linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)) , url('/static/images/image2.jpeg');
+    /*background-image: url('/static/images/image2.jpeg');*/
+  min-height: 300px;
+  /*height: 100%;*/
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-size: cover;
+  position: relative;
+}
+
+.buttonEmployee {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  /*height: 100vh;*/
+  width: 50%;
+}
+
+a {
+  font-size: 15px;
+  padding: 15px 30px;
+  color: #f4f4f4;
+  text-transform: uppercase;
+}
+
+.btnEmployee {
+  text-decoration: none;
+  border: 1px solid rgb(146, 148, 248);
+  position: relative;
+  overflow: hidden;
+}
+
+.btnEmployee:hover {
+  box-shadow: 1px 1px 25px 10px rgba(146, 148, 248, 0.4);
+}
+
+.btnEmployee:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(146, 148, 248, 0.4),
+    transparent
+  );
+  transition: all 650ms;
+}
+
+.btnEmployee:hover:before {
+  left: 100%;
+}
+
+/*----*/
+.buttonCreate {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  /*height: 100vh;*/
+  width: 50%;
+  margin-bottom: 10px;
+}
+
+a {
+  font-size: 15px;
+  padding: 15px 30px;
+  color: #f4f4f4;
+  text-transform: uppercase;
+}
+
+.btnCreate {
+  text-decoration: none;
+  border: 1px solid rgb(146, 148, 248);
+  position: relative;
+  overflow: hidden;
+}
+
+.btnCreate:hover {
+  box-shadow: 1px 1px 25px 10px rgba(146, 148, 248, 0.4);
+}
+
+.btnCreate:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(146, 148, 248, 0.4),
+    transparent
+  );
+  transition: all 650ms;
+}
+
+.btnCreate:hover:before {
+  left: 100%;
+}
+
+a.btnCreate:hover{
+  color: white !important;
+}
+
+@import url(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css);
+@import url(https://fonts.googleapis.com/css?family=Lato:300,400,700);
+
+.jumbotron h1 {
+	color: #353535;
+}
+footer {
+  margin-bottom: 0 !important;
+  margin-top: 80px;
+}
+footer p {
+  margin: 0;
+  padding: 0;
+}
+span.icon {
+	margin: 0 5px;
+	color: #d64541;
+}
+h2 {
+	color: #BDC3C7;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.mrng-60-top {
+	margin-top: 60px;
+}
+/* Global Button Styles */
+a.animated-button:link, a.animated-button:visited {
+	position: relative;
+	display: block;
+	margin: 30px auto 0;
+	padding: 14px 15px;
+	color: #fff;
+	font-size:14px;
+	font-weight: bold;
+	text-align: center;
+	text-decoration: none;
+	text-transform: uppercase;
+	overflow: hidden;
+	letter-spacing: .08em;
+	border-radius: 0;
+	text-shadow: 0 0 1px rgba(0, 0, 0, 0.2), 0 1px 0 rgba(0, 0, 0, 0.2);
+	-webkit-transition: all 1s ease;
+	-moz-transition: all 1s ease;
+	-o-transition: all 1s ease;
+	transition: all 1s ease;
+}
+a.animated-button:link:after, a.animated-button:visited:after {
+	content: "";
+	position: absolute;
+	height: 0%;
+	left: 50%;
+	top: 50%;
+	width: 150%;
+	z-index: -1;
+	-webkit-transition: all 0.75s ease 0s;
+	-moz-transition: all 0.75s ease 0s;
+	-o-transition: all 0.75s ease 0s;
+	transition: all 0.75s ease 0s;
+}
+a.animated-button:link:hover, a.animated-button:visited:hover {
+	color: #FFF;
+	text-shadow: none;
+}
+a.animated-button:link:hover:after, a.animated-button:visited:hover:after {
+	height: 450%;
+}
+a.animated-button:link, a.animated-button:visited {
+	position: relative;
+	display: block;
+	margin: 30px auto 0;
+	padding: 14px 15px;
+	color: #fff;
+	font-size:14px;
+	border-radius: 0;
+	font-weight: bold;
+	text-align: center;
+	text-decoration: none;
+	text-transform: uppercase;
+	overflow: hidden;
+	letter-spacing: .08em;
+	text-shadow: 0 0 1px rgba(0, 0, 0, 0.2), 0 1px 0 rgba(0, 0, 0, 0.2);
+	-webkit-transition: all 1s ease;
+	-moz-transition: all 1s ease;
+	-o-transition: all 1s ease;
+	transition: all 1s ease;
+}
+
+a.animated-button.victoria-one {
+	border: 2px solid #D24D57;
+}
+a.animated-button.victoria-one:after {
+	background: #D24D57;
+	-moz-transform: translateX(-50%) translateY(-50%) rotate(-25deg);
+	-ms-transform: translateX(-50%) translateY(-50%) rotate(-25deg);
+	-webkit-transform: translateX(-50%) translateY(-50%) rotate(-25deg);
+	transform: translateX(-50%) translateY(-50%) rotate(-25deg);
 }
