@@ -20,7 +20,7 @@
         </div>
     </div>
     <div class="container">
-        <form action="/updated-employee/{{empUpInfor.id}}" , method="post">
+        <form action="/updated-employee/{{empUpInfor.id}}" , method="post" id="updateForm">
       <div class="form-group row">
         <label for="Id" class="col-sm-2 col-form-label">Id</label>
         <div class="col-sm-10">
@@ -31,32 +31,32 @@
         <label for="name" class="col-sm-2 col-form-label">Name</label>
         <div class="col-sm-10">
             <input type="hidden" name="id" value="">
-          <input type="text" class="form-control" name="name" id="name" value="{{empUpInfor.name}}">
+          <input type="text" class="form-control" name="name" id="name" value="{{empUpInfor.name}}" autocomplete="off">
         </div>
       </div>
         <div class="form-group row">
             <label for="email" class="col-sm-2 col-form-label">Email</label>
             <div class="col-sm-10">
-              <input type="email" class="form-control" name="email" id="email" value="{{empUpInfor.email}}">
+              <input type="email" class="form-control" name="email" id="email" value="{{empUpInfor.email}}" autocomplete="off">
             </div>
         </div>
         <div class="form-group row">
             <label for="phoneNumber" class="col-sm-2 col-form-label">Phone Number</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" name="phoneNumber" id="phoneNumber" value="{{empUpInfor.phoneNumber}}" >
+              <input type="text" class="form-control" name="phoneNumber" id="phoneNumber" value="{{empUpInfor.phoneNumber}}" autocomplete="off">
             </div>
         </div>
         <div class="form-group row">
             <label for="address" class="col-sm-2 col-form-label">Address</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" name="address" id="address"  value="{{empUpInfor.address}}">
+              <input type="text" class="form-control" name="address" id="address"  value="{{empUpInfor.address}}" autocomplete="off">
             </div>
         </div>
 
         <div class="form-group row">
             <label for="dateOfBirth" class="col-sm-2 col-form-label">DateOfBirth</label>
             <div class="col-sm-10">
-                <input id="dateOfBirth"  placeholder="DOB" name="dateOfBirth"  value="{{empUpInfor.dateOfBirth}}" />
+                <input id="dateOfBirth"  placeholder="DOB" name="dateOfBirth"  value="{{empUpInfor.dateOfBirth}}" autocomplete="off" />
                 <script>
                     $('#dateOfBirth').datepicker({
                         uiLibrary: 'bootstrap4',
@@ -95,7 +95,7 @@
 
         <div class="form-group row">
           <div class="col-sm-10">
-            <button type="submit" class="btn btn-primary">Submit</button>
+                <div class="col-md-3 col-sm-3 col-xs-6"> <a href="javascript:$('#updateForm').submit()" class="btn btn-sm animated-button victoria-one">UPDATE</a> </div>
           </div>
         </div>
     </form>
