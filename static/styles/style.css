@@ -610,3 +610,27 @@ a.animated-button.victoria-one:after {
 	-webkit-transform: translateX(-50%) translateY(-50%) rotate(-25deg);
 	transform: translateX(-50%) translateY(-50%) rotate(-25deg);
 }
+
+
+.imageRegister {
+  /* The image used */
+  min-height: 300px;
+  /*height: 100%;*/
+  /* Center and scale the image nicely */
+  /*background-position: center;*/
+  background-size: cover;
+  background-attachment: fixed;
+  width: 60% !important;
+  position: relative;
+  /*margin-top: 10px;*/
+  background-image: linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)) , url('/static/images/image3.jpeg');
+}
+
+.imageCreateRegister{
+  width: 85%!important;
+  border: 2px solid white;
+  border-radius: 10px;
+  padding: 50px;
+  margin-bottom: 50px;
+  margin-top: 20px;
+}
