@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title> List Employees </title>
+    <title> SAMS  </title>
+      <link rel="ICON" href="{{ url_for('static',filename='images/icon.ico') }}" type="image/ico" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
       <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -16,13 +17,12 @@
 </head>
 <body class=" container pt-4 imageRegister" >
 
-    <h1 class="text-center" style="color: white">L</h1>
+    <h1 class="text-center" style="color: white">Login</h1>
     <div class="container formCreate imageCreateRegister" style="padding: 30px ">
-        <form action="/capture-image" , method="post" iogind="formCreate">
+        <form action="/login" , method="post" id="formCreate">
           <div class="form-group row">
             <label for="username" class="col-sm-2 col-form-label">Username:</label>
             <div class="col-sm-10">
-                <input type="hidden" name="id" value="">
               <input type="text" class="form-control" name="username" id="username" placeholder="Username" autocomplete="off">
             </div>
           </div>
@@ -35,13 +35,12 @@
 
             <div class="form-group row">
               <div class="col-sm-10">
-<!--                  <button class="btn-danger" type="submit">AAA</button>-->
                     <div class="col-md-3 col-sm-3 col-xs-6"> <a href="javascript:$('#formCreate').submit()" class="btn btn-sm animated-button victoria-one">Submit</a> </div>
               </div>
             </div>
 
             <div>
-                <h6 style="color: white">Don't have an account?</h6>
+                <h6 style="color: white">Don't have an account?<a href="/register">Register</a></h6>
             </div>
         </form>
     </div>

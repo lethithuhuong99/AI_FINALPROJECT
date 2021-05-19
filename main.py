@@ -1,5 +1,6 @@
+import bcrypt
 import cv2
-from flask import Flask , Response , render_template,request, redirect
+from flask import Flask , Response , render_template,request, session,redirect, url_for
 import os
 import datetime
 import time
@@ -9,10 +10,13 @@ warnings.filterwarnings('ignore')
 import numpy as np
 from tensorflow.keras.models import load_model
 from PIL import Image
+import hashlib
 from threading import Thread
+from flask_login import login_user, logout_user, current_user, login_required
 
 import pymongo
 import csv
+
 
 
 #Use Flask
@@ -24,6 +28,7 @@ mydb = myclient['employees']
 mycol = mydb['attendancedbs']
 listEmployeesCol = mydb['employeedbs']
 countersCol = mydb['counters']
+admin = mydb['admin']
 
 if(countersCol.count() ==0):
     countersCol.insert_one(
@@ -43,75 +48,81 @@ def getNextSequence(name):
 
 @app.route('/')
 def list_employees():
-    resultPois = listEmployeesCol.find()
-    listEmp=[];
-    for x in resultPois:
-        listEmp.append(x)
-    return render_template("listEmployees.html",len = len(listEmp), listEmp = listEmp)
+    if 'username' in session:
+        resultPois = listEmployeesCol.find()
+        listEmp = [];
+        for x in resultPois:
+            listEmp.append(x)
+        return render_template("listEmployees.html", len=len(listEmp), listEmp=listEmp, session = session)
+    return redirect('/login')
+
 
 @app.route('/list-attendance')
 def list_attendance():
-    attendance = mycol.aggregate([
-                {
-                    "$lookup":
+    if 'username' in session:
+        attendance = mycol.aggregate([
                     {
-                        "from": "employeedbs",
-                        "localField": "userId",
-                        "foreignField": "id",
-                        "as": "empDetail"
-                    }
-                },
-            ])
-    listAttendance = [];
-    for x in attendance:
-        listAttendance.append(x)
-    return render_template("listAttendance.html",len = len(listAttendance), listAttendance = listAttendance)
-
+                        "$lookup":
+                        {
+                            "from": "employeedbs",
+                            "localField": "userId",
+                            "foreignField": "id",
+                            "as": "empDetail"
+                        }
+                    },
+                ])
+        listAttendance = [];
+        for x in attendance:
+            listAttendance.append(x)
+        return render_template("listAttendance.html",len = len(listAttendance), listAttendance = listAttendance)
+    return redirect('/login')
 
 @app.route('/update-employee/<id>')
 def update_employee(id):
-    print(id)
-    empUpId = {"id": id}
-    empUp = listEmployeesCol.find(empUpId)
-    for x in empUp:
-        empUpInfor = x
+    if 'username' in session:
+        empUpId = {"id": id}
+        empUp = listEmployeesCol.find(empUpId)
+        for x in empUp:
+            empUpInfor = x
 
-    # you can use the the rowData from template
-    return render_template('updateEmployee.html', empUpInfor = empUpInfor)
-
-
+        # you can use the the rowData from template
+        return render_template('updateEmployee.html', empUpInfor = empUpInfor)
+    return redirect('/login')
 
 @app.route('/updated-employee/<id>',  methods=['GET', 'POST'])
 def updated_employee(id):
-    if request.method == 'POST':
-        print(id)
-        employeeInfor = { "$set": {
-            'name': request.form.get('name'),
-            'email': request.form.get('email'),
-            'gender': request.form.get('gender'),
-            'phoneNumber': request.form.get('phoneNumber'),
-            'address': request.form.get('address'),
-            'dateOfBirth': request.form.get('dateOfBirth'),
-            'position': request.form.get('position'),
-            'id':id,
-        }}
+    if 'username' in session:
+        if request.method == 'POST':
+            employeeInfor = { "$set": {
+                'name': request.form.get('name'),
+                'email': request.form.get('email'),
+                'gender': request.form.get('gender'),
+                'phoneNumber': request.form.get('phoneNumber'),
+                'address': request.form.get('address'),
+                'dateOfBirth': request.form.get('dateOfBirth'),
+                'position': request.form.get('position'),
+                'id':id,
+            }}
 
-        empUpId = {"id": id}
+            empUpId = {"id": id}
 
-        listEmployeesCol.update_one(empUpId, employeeInfor)
-    # empUp = listEmployeesCol.find(empUpId)
-    # for x in empUp:
-    #     empUpInfor = x
+            listEmployeesCol.update_one(empUpId, employeeInfor)
+        # empUp = listEmployeesCol.find(empUpId)
+        # for x in empUp:
+        #     empUpInfor = x
 
-    # you can use the the rowData from template
-    return redirect('/')
+        # you can use the the rowData from template
+        return redirect('/')
+    return redirect('/login')
 
 @app.route('/delete-employee/<id>')
 def delete_employee(id):
-    empDelId = {"id": id}
-    listEmployeesCol.delete_one(empDelId)
-    # you can use the the rowData from template
-    return redirect('/')
+    if 'username' in session:
+        empDelId = {"id": id}
+        listEmployeesCol.delete_one(empDelId)
+        # you can use the the rowData from template
+        return redirect('/')
+    return redirect('/login')
 
 
 
@@ -307,7 +318,9 @@ def video():
 #Capture Image Route Html
 @app.route('/create-employee')
 def capture():
-    return render_template('createEmployee.html')
+    if 'username' in session:
+        return render_template('createEmployee.html')
+    return redirect('/login')
 
 #Check Id isNumber or Not
 def is_number(s):
@@ -366,44 +379,45 @@ def captureImage():
 IsCapture = False
 @app.route('/capture-image',  methods=['GET', 'POST'])
 def captureVideo():
-    global IsCapture
-    IsCapture = True
-    if request.method == 'POST':
-        global Id
-        # Id = request.form.get("Id")
-        Id = '2021'+ str(getNextSequence('activities')['seq'])
-        # print('request.form.get("AA") ', request.form.get("AA"))
-        employeeInfor = {
-            'name': request.form.get('name'),
-            'email': request.form.get('email'),
-            'gender': request.form.get('gender'),
-            'phoneNumber': request.form.get('phoneNumber'),
-            'address': request.form.get('address'),
-            'dateOfBirth': request.form.get('dateOfBirth'),
-            'position': request.form.get('position'),
-            # 'id': request.form.get('Id'),
-            'id': Id,
-        }
-        listEmployeesCol.insert_one(employeeInfor)
-        if is_number(Id):
-            return render_template('captureImage.html',empUpInfor=employeeInfor)
-
+    if 'username' in session:
+        global IsCapture
+        IsCapture = True
+        if request.method == 'POST':
+            global Id
+            # Id = request.form.get("Id")
+            Id = '2021'+ str(getNextSequence('activities')['seq'])
+            # print('request.form.get("AA") ', request.form.get("AA"))
+            employeeInfor = {
+                'name': request.form.get('name'),
+                'email': request.form.get('email'),
+                'gender': request.form.get('gender'),
+                'phoneNumber': request.form.get('phoneNumber'),
+                'address': request.form.get('address'),
+                'dateOfBirth': request.form.get('dateOfBirth'),
+                'position': request.form.get('position'),
+                # 'id': request.form.get('Id'),
+                'id': Id,
+            }
+            listEmployeesCol.insert_one(employeeInfor)
+            if is_number(Id):
+                return render_template('captureImage.html',empUpInfor=employeeInfor)
+    return redirect('/login')
 
 @app.route('/update-images/<id>')
 def update_images(id):
-    print(id)
-    empUpId = {"id": id}
-    empUp = listEmployeesCol.find(empUpId)
-    for x in empUp:
-        empUpInfor = x
+    if 'username' in session:
+        empUpId = {"id": id}
+        empUp = listEmployeesCol.find(empUpId)
+        for x in empUp:
+            empUpInfor = x
 
-    global Id
-    Id = str(id)
+        global Id
+        Id = str(id)
 
-    # you can use the the rowData from template
-    if is_number(Id):
-        return render_template('captureImage.html', empUpInfor=empUpInfor)
-
+        # you can use the the rowData from template
+        if is_number(Id):
+            return render_template('captureImage.html', empUpInfor=empUpInfor)
+    return redirect('/login')
 
 def getImagesAndLabels(path):
     # get the path of all the files in the folder
@@ -442,9 +456,41 @@ def TrainImages():
     print("All Images")
     return redirect('/')
 
-@app.route('/register')
-def login():
+@app.route('/register', methods=['POST','GET'])
+def register():
+    if request.method == 'POST':
+        existing_username = admin.find_one({'name': request.form['username']})
+        existing_useremail = admin.find_one({'email': request.form['email']})
+        if (existing_username is None) and (existing_useremail is None) and (str(request.form['password'])==str(request.form['confirmPassword'])) :
+            hashpass = hashlib.md5(request.form['password'].encode('utf-8')).hexdigest()
+            admin.insert({'name': request.form['username'],'email': request.form['email'], 'password':hashpass})
+            session['username'] = request.form['username']
+            return redirect('/')
+
+        return 'That username already exists!'
+
     return render_template('register.html')
 
+@app.route('/login', methods=['POST','GET'])
+def login():
+    if request.method == 'POST':
+        login_user = admin.find_one({'name' : request.form['username']})
+        if login_user:
+            if login_user['password'] == hashlib.md5(request.form['password'].encode('utf-8')).hexdigest():
+                session['username'] = request.form['username']
+                return redirect(url_for('list_employees'))
+        return 'Invalid username/password combination'
+
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+	session.pop('username', None)
+	return redirect('/login')
+
 if __name__ == "__main__":
+    app.secret_key = 'super secret key'
+    app.config['SESSION_TYPE'] = 'filesystem'
+
+    app.debug = True
     app.run(debug=True, host='localhost', port=9874)

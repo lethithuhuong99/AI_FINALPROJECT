@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title> Bootstrap SORT table Example </title>
+<title> SAMS </title>
+    <link rel="ICON" href="{{ url_for('static',filename='images/icon.ico') }}" type="image/ico" />
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -46,8 +47,8 @@
               <div class="col-5">
                 <nav class="site-navigation position-relative text-right" role="navigation">
                   <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
-                    <li style="pointer-events: none"><a href="{{ url_for('list_attendance') }}" ><span>21599</span></a></li>
-                    <li><a href="#" ><span>LogOut</span></a></li>
+                    <li style="pointer-events: none"><a href="{{ url_for('list_attendance') }}" ><span>{{session.username}}</span></a></li>
+                    <li><a href="/logout" ><span>LogOut</span></a></li>
                   </ul>
                 </nav>
               </div>
