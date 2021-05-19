@@ -26,23 +26,19 @@
 </head>
 <body>
     <header class="site-navbar" role="banner">
-      <div class="container-fluid menu" >
-          <div class="container">
-              <div class="row">
-              <div class="col-1 ">
-<!--                  <h1> Brand</h1>-->
-              </div>
+      <div class="container-fluid menu" style="padding: 10px 20px 10px 20px">
+          <div class="row" >
               <div class="col-1 " style="padding-top: 5px;">
-<!--                  <h1 style="color: white"> Brand</h1>-->
                   <img  src = "/static/images/logo.png">
               </div>
 
-
-              <div class="col-5">
+              <div class="col-6">
                 <nav class="site-navigation position-relative text-right" role="navigation">
                   <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
                     <li><a href="{{ url_for('list_employees') }}" ><span>Employees</span></a></li>
                     <li><a href="{{ url_for('list_attendance') }}" ><span>Attendance</span></a></li>
+                    <li><a href="{{ url_for('attendanceVideo') }}" ><span>Attendances</span></a></li>
+
                   </ul>
                 </nav>
               </div>
@@ -55,7 +51,6 @@
                   </ul>
                 </nav>
               </div>
-          </div>
           </div>
       </div>
       <div class="container">

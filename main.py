@@ -465,7 +465,7 @@ def register():
             hashpass = hashlib.md5(request.form['password'].encode('utf-8')).hexdigest()
             admin.insert({'name': request.form['username'],'email': request.form['email'], 'password':hashpass})
             session['username'] = request.form['username']
-            return redirect('/')
+            return redirect('/login')
 
         return 'That username already exists!'
 
@@ -479,7 +479,7 @@ def login():
             if login_user['password'] == hashlib.md5(request.form['password'].encode('utf-8')).hexdigest():
                 session['username'] = request.form['username']
                 return redirect(url_for('list_employees'))
-        return 'Invalid username/password combination'
+        return render_template('login.html')
 
     return render_template('login.html')
 
