@@ -168,14 +168,15 @@ def recognize_attendence():
         im = cv2.flip(im,1)
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         now = datetime.datetime.now()
-        hour = 19
-        minute = 39
+        hour = 22
+        minute = 28
         startCheckIn = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
         endCheckIn = now.replace(hour=hour, minute=minute, second=20, microsecond=0)
         startCheckOut = now.replace(hour=hour, minute=minute, second=30, microsecond=0)
         endCheckOut = now.replace(hour=hour, minute=minute, second=50, microsecond=0)
         faces = faceCascade.detectMultiScale(gray, 1.2, 5,minSize = (int(minW), int(minH)),flags = cv2.CASCADE_SCALE_IMAGE)
-        if((now < endCheckIn and now > startCheckIn) or (now > startCheckOut and now < endCheckOut)):
+        if((now < endCheckIn and now > startCheckIn) or (now > startCheckOut and now < endCheckOut) ):
+            isExport = False
             for(x, y, w, h) in faces:
                 Id, conf = recognizer.predict(gray[y:y+h, x:x+w])
 
@@ -255,43 +256,42 @@ def recognize_attendence():
         yield (b'--frame\r\n'b'Content-Type: text/plain\r\n\r\n' + strinData + b'\r\n')
 
         # if () :
-        if (now > endCheckOut):
-            break
+        if (now > endCheckOut and isExport == False):
+            isExport = True
+            ts = time.time()
+            date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
+            timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
+            Hour, Minute, Second = timeStamp.split(":")
+            fileName = "Attendance" + os.sep + "Attendance_" + date + "_" + Hour + "-" + Minute + "-" + Second + ".csv"
+            attendance = attendance.drop_duplicates(subset=['Id'], keep='first')
+            attendance.to_csv(fileName, index=False)
 
-    ts = time.time()
-    date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
-    timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
-    Hour, Minute, Second = timeStamp.split(":")
-    fileName = "Attendance"+os.sep+"Attendance_"+date+"_"+Hour+"-"+Minute+"-"+Second+".csv"
-    attendance = attendance.drop_duplicates(subset=['Id'], keep='first')
-    attendance.to_csv(fileName, index=False)
+            # print(fileName)
+            with open(fileName) as csv_file:
+                csv_reader = csv.reader(csv_file, delimiter=',')
+                line_count = 0
+                attendanceList = []
 
-    # print(fileName)
-    with open(fileName) as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        line_count = 0
-        attendanceList = []
+                for row in csv_reader:
+                    if line_count == 0:
+                        # print(f'Column names are {", ".join(row)}')
+                        line_count += 1
+                    else:
+                        attendanceDetail = {
+                            "date": row[0],
+                            "userId": row[1],
+                            "mask": row[2],
+                            "checkIn": row[3],
+                            "checkOut": row[4],
+                        }
+                        attendanceList.append(attendanceDetail)
+                        line_count += 1
+                # print(f'Processed {line_count} lines.')
+            if (attendanceList != []):
+                x = mycol.insert_many(attendanceList)
 
-        for row in csv_reader:
-            if line_count == 0:
-                # print(f'Column names are {", ".join(row)}')
-                line_count += 1
-            else:
-                attendanceDetail = {
-                    "date": row[0],
-                    "userId": row[1],
-                    "mask": row[2],
-                    "checkIn": row[3],
-                    "checkOut": row[4],
-                }
-                attendanceList.append(attendanceDetail)
-                line_count += 1
-        # print(f'Processed {line_count} lines.')
-    if(attendanceList!=[]):
-        x = mycol.insert_many(attendanceList)
+            print("Attendance Successful")
 
-
-    print("Attendance Successful")
     cam.release()
     cv2.destroyAllWindows()
 
