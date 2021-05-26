@@ -150,7 +150,7 @@ def recognize_attendence():
     recognizer.read("TrainingImageLabel"+os.sep+"Trainner.yml")
     harcascadePath = "haarcascade_frontalface_default.xml"
     faceCascade = cv2.CascadeClassifier(harcascadePath)
-    df = pd.read_csv("StudentDetails"+os.sep+"StudentDetails.csv")
+    df = pd.read_csv("EmployeeIds"+os.sep+"EmployeeIds.csv")
     font = cv2.FONT_HERSHEY_SIMPLEX
     col_names = ['Date', 'Id', 'Mask', 'Checkin', 'Checkout']
     attendance = pd.DataFrame(columns=col_names)
@@ -168,8 +168,8 @@ def recognize_attendence():
         im = cv2.flip(im,1)
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         now = datetime.datetime.now()
-        hour = 22
-        minute = 28
+        hour = 20
+        minute = 45
         startCheckIn = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
         endCheckIn = now.replace(hour=hour, minute=minute, second=20, microsecond=0)
         startCheckOut = now.replace(hour=hour, minute=minute, second=30, microsecond=0)
@@ -369,7 +369,7 @@ def captureImage():
         cv2.destroyAllWindows()
         res = "Images Saved for ID : " + Id
         row = [Id]
-        with open("StudentDetails" + os.sep + "StudentDetails.csv", 'a+') as csvFile:
+        with open("EmployeeIds" + os.sep + "EmployeeIds.csv", 'a+') as csvFile:
             writer = csv.writer(csvFile)
             writer.writerow(row)
         csvFile.close()
