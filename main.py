@@ -168,8 +168,8 @@ def recognize_attendence():
         im = cv2.flip(im,1)
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         now = datetime.datetime.now()
-        hour = 20
-        minute = 45
+        hour = 13
+        minute = 19
         startCheckIn = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
         endCheckIn = now.replace(hour=hour, minute=minute, second=20, microsecond=0)
         startCheckOut = now.replace(hour=hour, minute=minute, second=30, microsecond=0)
@@ -191,15 +191,15 @@ def recognize_attendence():
                 if probabilityValue > threshold:
                     if classIndex == 0:
                         cv2.rectangle(im, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                        cv2.rectangle(im, (x, y - 40), (x + w, y), (0, 255, 0), -2)
-                        cv2.putText(im, str(get_className(classIndex)), (x, y - 10), font, 0.75,
+                        cv2.rectangle(im, (x+w,y+h),(x,(y+h)+40), (0, 255, 0), -2)
+                        cv2.putText(im, str(get_className(classIndex)), (x,(y+h)+20), font, 1,
                                     (255, 255, 255), 1,
                                     cv2.LINE_AA)
                         print("Mask")
                     elif classIndex == 1:
                         cv2.rectangle(im, (x, y), (x + w, y + h), (50, 50, 255), 2)
-                        cv2.rectangle(im, (x, y - 40), (x + w, y), (50, 50, 255), -2)
-                        cv2.putText(im, str(get_className(classIndex)), (x, y - 10), font, 0.75,
+                        cv2.rectangle(im, (x+w,y+h),(x,(y+h)+40), (50, 50, 255), -2)
+                        cv2.putText(im, str(get_className(classIndex)), (x,(y+h)+20), font, 1,
                                     (255, 255, 255), 1,
                                     cv2.LINE_AA)
                         print("No Mask")
