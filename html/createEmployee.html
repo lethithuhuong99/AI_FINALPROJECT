@@ -88,15 +88,25 @@
                 </div>
             </div>
 
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label" for="inputPosition">Position</label>
-                <div class="col-sm-10">
-                        <select id="inputPosition" class="form-control" name="position">
-                            <option selected>Employees</option>
-                            <option>Bancellor</option>
-                        </select>
-                </div>
+<!--            <div class="form-group row">-->
+<!--                <label class="col-sm-2 col-form-label" for="inputPosition">Position</label>-->
+<!--                <div class="col-sm-10">-->
+<!--                        <select id="inputPosition" class="form-control" name="position">-->
+<!--                            <option selected>Employees</option>-->
+<!--                            <option>Bancellor</option>-->
+<!--                        </select>-->
+<!--                </div>-->
+<!--            </div>-->
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="inputPosition">Position</label>
+            <div class="col-sm-10">
+                <select id="inputPosition" class="form-control" name="position">
+                    {%for i in positions%}
+                        <option >{{i}}</option>
+                    {% endfor %}
+                </select>
             </div>
+          </div>
 
             <div class="form-group row">
               <div class="col-sm-10">

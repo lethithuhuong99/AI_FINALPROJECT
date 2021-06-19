@@ -29,6 +29,17 @@ mycol = mydb['attendancedbs']
 listEmployeesCol = mydb['employeedbs']
 countersCol = mydb['counters']
 admin = mydb['admin']
+positions = [
+    'CEO',
+    'Director',
+    'Deputy',
+    'Chief Executive Officer',
+    'Chief Information Officer',
+    'Head of department',
+    'Deputy of department',
+    'Secterary',
+    'Employee',
+    'Trainee']
 
 if(countersCol.count() ==0):
     countersCol.insert_one(
@@ -86,7 +97,7 @@ def update_employee(id):
             empUpInfor = x
 
         # you can use the the rowData from template
-        return render_template('updateEmployee.html', empUpInfor = empUpInfor)
+        return render_template('updateEmployee.html', empUpInfor = empUpInfor, positions = positions)
     return redirect('/login')
 
 @app.route('/updated-employee/<id>',  methods=['GET', 'POST'])
@@ -169,7 +180,7 @@ def recognize_attendence():
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         now = datetime.datetime.now()
         hour = 22
-        minute = 14
+        minute = 21
         startCheckIn = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
         endCheckIn = now.replace(hour=hour, minute=minute, second=20, microsecond=0)
         startCheckOut = now.replace(hour=hour, minute=minute, second=30, microsecond=0)
@@ -319,7 +330,7 @@ def video():
 @app.route('/create-employee')
 def capture():
     if 'username' in session:
-        return render_template('createEmployee.html')
+        return render_template('createEmployee.html', positions = positions)
     return redirect('/login')
 
 #Check Id isNumber or Not
