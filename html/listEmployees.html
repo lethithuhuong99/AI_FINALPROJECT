@@ -37,7 +37,7 @@
                   <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
                     <li><a href="{{ url_for('list_employees') }}" ><span>Employees</span></a></li>
                     <li><a href="{{ url_for('list_attendance') }}" ><span>Attendance</span></a></li>
-                    <li><a href="{{ url_for('attendanceVideo') }}" ><span>Show Attendances</span></a></li>
+                    <li><a href="{{ url_for('attendanceVideo') }}" target="_blank" ><span>Show Attendances</span></a></li>
 
                   </ul>
                 </nav>
@@ -47,7 +47,28 @@
                 <nav class="site-navigation position-relative text-right" role="navigation">
                   <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
                     <li style="pointer-events: none"><a href="{{ url_for('list_attendance') }}" ><span>{{session.username}}</span></a></li>
-                    <li><a href="/logout" ><span>LogOut</span></a></li>
+                    <li><a href="#myModal2" data-toggle="modal" data-target="#myModal2"><span>LogOut</span></a>
+                        <div class="modal fade" id="myModal2" role="dialog">
+                            <div class="modal-dialog" >
+
+                              <!-- Modal content-->
+                              <div class="modal-content" >
+                                <div class="modal-header"  style="background-color: rgba(255, 0, 0, 0.8)">
+                                  <h4 class="modal-title" style="color: white">Logout</h4>
+                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                                </div>
+                                <div class="modal-body">
+                                  <p style="color: black;text-align: left">Do you want to logout?</p>
+                                </div>
+                                <div class="modal-footer">
+                                  <a href="/logout" class="btn btn-sm btn-outline-danger" ><span>LogOut</span></a>
+                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                    </li>
                   </ul>
                 </nav>
               </div>
@@ -93,7 +114,26 @@
                         <td class="d-flex justify-content-between">
                             <button type="button" class="btn btn-sm btn-outline-primary" onclick="window.location.href='{{ url_for('update_employee',  id = listEmp[i].id ) }}';"><i class="fas fa-edit" ></i></button>
                             <button type="button" class="btn btn-outline-success" onclick="window.location.href='{{ url_for('update_images',  id = listEmp[i].id ) }}';"><i class="fas fa-camera"></i></button>
-                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="window.location.href='{{ url_for('delete_employee',  id = listEmp[i].id ) }}';"><i class="fas fa-trash-alt"></i></button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#myModal"><i class="fas fa-trash-alt" ></i></button>
+                            <div class="modal fade show" id="myModal" role="dialog">
+                                <div class="modal-dialog">
+                                  <!-- Modal content-->
+                                  <div class="modal-content">
+                                    <div class="modal-header" style="background-color: rgba(255, 0, 0, 0.8)">
+                                      <h4 class="modal-title" style="color:#fff">Delete employee</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                      <p style="color: black">Do you want to delete?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="window.location.href='{{ url_for('delete_employee',  id = listEmp[i].id ) }}';">Delete</button>
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </div>
+                                  </div>
+
+                                </div>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}

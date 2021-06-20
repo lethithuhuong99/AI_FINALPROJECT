@@ -77,7 +77,7 @@ a {
   .site-navbar .site-navigation .site-menu {
     margin-bottom: 0;
     /*text-align: center;*/
-    opacity: 0.8;
+    /*opacity: 0.8;*/
     border-radius: 5px;
   }
     .site-navbar .site-navigation .site-menu .active > a span {
@@ -414,6 +414,19 @@ i.gj-icon{
   position: relative;
 }
 
+.attendanceBackground{
+    background-image: linear-gradient(rgba(29, 31, 32, 0.8),rgba(29, 31, 32, 0.8)) , url('/static/images/image4.jpeg');
+    /*background-image: url('/static/images/image2.jpeg');*/
+    /*background: #1D1F20;*/
+  min-height: 300px;
+  /*height: 100%;*/
+  /* Center and scale the image nicely */
+  /*background-position: center;*/
+  background-size: cover;
+  background-attachment: fixed;
+  position: relative;
+}
+
 .buttonEmployee {
   display: flex;
   justify-content: left;
@@ -634,3 +647,70 @@ a.animated-button.victoria-one:after {
   margin-bottom: 50px;
   margin-top: 20px;
 }
+
+.modal-content {
+  margin-top: 100px;
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1040;
+    background-color: #333;
+}
+
+.modal-backdrop.in {
+    filter: alpha(opacity=50);
+    opacity: .5;
+}
+
+div#myModal, div#myModal2{
+  background-color: rgba(0,0,0,0.5);
+}
+
+@import url('https://fonts.googleapis.com/css?family=Raleway:200');
+
+#box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: 'Raleway';
+  font-size: 2.5rem;
+}
+.gradient-border {
+  --borderWidth: 10px;
+  background: #1D1F20;
+  position: relative;
+  border-radius: var(--borderWidth);
+}
+.gradient-border:after {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--borderWidth));
+  left: calc(-1 * var(--borderWidth));
+  height: calc(100% + var(--borderWidth) * 2);
+  width: calc(100% + var(--borderWidth) * 2);
+  background: linear-gradient(60deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
+  border-radius: calc(2 * var(--borderWidth));
+  z-index: -1;
+  animation: animatedgradient 3s ease alternate infinite;
+  background-size: 300% 300%;
+}
+
+
+@keyframes animatedgradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
