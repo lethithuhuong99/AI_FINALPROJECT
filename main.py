@@ -1,11 +1,12 @@
 import bcrypt
 import cv2
-from flask import Flask , Response , render_template,request, session,redirect, url_for
+from flask import Flask, Response, render_template, request, session, redirect, url_for
 import os
 import datetime
 import time
 import pandas as pd
 import warnings
+
 warnings.filterwarnings('ignore')
 import numpy as np
 from tensorflow.keras.models import load_model
@@ -17,15 +18,16 @@ from flask_login import login_user, logout_user, current_user, login_required
 import pymongo
 import csv
 
+# Use Flask
+app = Flask(__name__, template_folder='html')
 
-
-#Use Flask
-app = Flask(__name__ , template_folder = 'html')
-
-#Use Database with MongoDb
-myclient = pymongo.MongoClient("mongodb+srv://admin:admin123@cluster0.9n8yb.mongodb.net/employees?retryWrites=true&w=majority")
+# Use Database with MongoDb
+myclient = pymongo.MongoClient(
+    "mongodb+srv://admin:admin123@cluster0.9n8yb.mongodb.net/employees?retryWrites=true&w=majority")
 mydb = myclient['employees']
 mycol = mydb['attendancedbs']
+# delete all attendance
+# mycol.delete_many({})
 listEmployeesCol = mydb['employeedbs']
 countersCol = mydb['counters']
 admin = mydb['admin']
@@ -41,7 +43,7 @@ positions = [
     'Employee',
     'Trainee']
 
-if(countersCol.count() ==0):
+if (countersCol.count() == 0):
     countersCol.insert_one(
         {
             '_id': "activities",
@@ -49,13 +51,15 @@ if(countersCol.count() ==0):
         }
     )
 
+
 def getNextSequence(name):
     ret = countersCol.find_and_modify(
-        query={ '_id' : name },
+        query={'_id': name},
         update={'$inc': {'seq': 1}},
         new=True
     )
     return ret
+
 
 @app.route('/')
 def list_employees():
@@ -64,7 +68,7 @@ def list_employees():
         listEmp = [];
         for x in resultPois:
             listEmp.append(x)
-        return render_template("listEmployees.html", len=len(listEmp), listEmp=listEmp, session = session)
+        return render_template("listEmployees.html", len=len(listEmp), listEmp=listEmp, session=session)
     return redirect('/login')
 
 
@@ -72,21 +76,22 @@ def list_employees():
 def list_attendance():
     if 'username' in session:
         attendance = mycol.aggregate([
+            {
+                "$lookup":
                     {
-                        "$lookup":
-                        {
-                            "from": "employeedbs",
-                            "localField": "userId",
-                            "foreignField": "id",
-                            "as": "empDetail"
-                        }
-                    },
-                ])
+                        "from": "employeedbs",
+                        "localField": "userId",
+                        "foreignField": "id",
+                        "as": "empDetail"
+                    }
+            },
+        ])
         listAttendance = [];
         for x in attendance:
             listAttendance.append(x)
-        return render_template("listAttendance.html",len = len(listAttendance), listAttendance = listAttendance)
+        return render_template("listAttendance.html", len=len(listAttendance), listAttendance=listAttendance)
     return redirect('/login')
+
 
 @app.route('/update-employee/<id>')
 def update_employee(id):
@@ -97,14 +102,15 @@ def update_employee(id):
             empUpInfor = x
 
         # you can use the the rowData from template
-        return render_template('updateEmployee.html', empUpInfor = empUpInfor, positions = positions)
+        return render_template('updateEmployee.html', empUpInfor=empUpInfor, positions=positions)
     return redirect('/login')
 
-@app.route('/updated-employee/<id>',  methods=['GET', 'POST'])
+
+@app.route('/updated-employee/<id>', methods=['GET', 'POST'])
 def updated_employee(id):
     if 'username' in session:
         if request.method == 'POST':
-            employeeInfor = { "$set": {
+            employeeInfor = {"$set": {
                 'name': request.form.get('name'),
                 'email': request.form.get('email'),
                 'gender': request.form.get('gender'),
@@ -112,12 +118,32 @@ def updated_employee(id):
                 'address': request.form.get('address'),
                 'dateOfBirth': request.form.get('dateOfBirth'),
                 'position': request.form.get('position'),
-                'id':id,
+                'id': id,
             }}
 
             empUpId = {"id": id}
 
-            listEmployeesCol.update_one(empUpId, employeeInfor)
+            existing_phoneNumber = listEmployeesCol.find_one({'phoneNumber': request.form['phoneNumber']})
+            existing_email = listEmployeesCol.find_one({'email': request.form['email']})
+
+            isExist = False
+            if (existing_phoneNumber):
+                if (existing_phoneNumber['id'] != str(id)):
+                    isExist = True
+            if (existing_email):
+                if (existing_email['id'] != str(id)):
+                    isExist = True
+            if (isExist == True):
+                if 'username' in session:
+                    empUpId = {"id": id}
+                    empUp = listEmployeesCol.find(empUpId)
+                    for x in empUp:
+                        empUpInfor = x
+
+                    return render_template('updateEmployee.html', existingEmp=True, positions=positions,
+                                           empUpInfor=empUpInfor)
+            else:
+                listEmployeesCol.update_one(empUpId, employeeInfor)
         # empUp = listEmployeesCol.find(empUpId)
         # for x in empUp:
         #     empUpInfor = x
@@ -125,6 +151,7 @@ def updated_employee(id):
         # you can use the the rowData from template
         return redirect('/')
     return redirect('/login')
+
 
 @app.route('/delete-employee/<id>')
 def delete_employee(id):
@@ -136,32 +163,33 @@ def delete_employee(id):
     return redirect('/login')
 
 
-
-#Load model Mask
+# Load model Mask
 model = load_model('MyTrainingModel.h5')
-threshold=0.90
+threshold = 0.90
 
 
 def preprocessing(img):
-    img=img.astype("uint8")
-    img=cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    img=cv2.equalizeHist(img)
-    img = img/255
+    img = img.astype("uint8")
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img = cv2.equalizeHist(img)
+    img = img / 255
     return img
 
-def get_className(classNo):
-	if classNo==0:
-		return "Mask"
-	elif classNo==1:
-		return "No Mask"
 
-#Attendance Function
+def get_className(classNo):
+    if classNo == 0:
+        return "Mask"
+    elif classNo == 1:
+        return "No Mask"
+
+
+# Attendance Function
 def recognize_attendence():
     recognizer = cv2.face.LBPHFaceRecognizer_create()  # cv2.createLBPHFaceRecognizer()
-    recognizer.read("TrainingImageLabel"+os.sep+"Trainner.yml")
+    recognizer.read("TrainingImageLabel" + os.sep + "Trainner.yml")
     harcascadePath = "haarcascade_frontalface_default.xml"
     faceCascade = cv2.CascadeClassifier(harcascadePath)
-    df = pd.read_csv("EmployeeIds"+os.sep+"EmployeeIds.csv")
+    df = pd.read_csv("EmployeeIds" + os.sep + "EmployeeIds.csv")
     font = cv2.FONT_HERSHEY_SIMPLEX
     col_names = ['Date', 'Id', 'Mask', 'Checkin', 'Checkout']
     attendance = pd.DataFrame(columns=col_names)
@@ -176,7 +204,7 @@ def recognize_attendence():
 
     while True:
         ret, im = cam.read()
-        im = cv2.flip(im,1)
+        im = cv2.flip(im, 1)
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         now = datetime.datetime.now()
         hour = 12
@@ -185,11 +213,12 @@ def recognize_attendence():
         endCheckIn = now.replace(hour=hour, minute=minute, second=20, microsecond=0)
         startCheckOut = now.replace(hour=hour, minute=minute, second=30, microsecond=0)
         endCheckOut = now.replace(hour=hour, minute=minute, second=50, microsecond=0)
-        faces = faceCascade.detectMultiScale(gray, 1.2, 5,minSize = (int(minW), int(minH)),flags = cv2.CASCADE_SCALE_IMAGE)
-        if((now < endCheckIn and now > startCheckIn) or (now > startCheckOut and now < endCheckOut) ):
+        faces = faceCascade.detectMultiScale(gray, 1.2, 5, minSize=(int(minW), int(minH)),
+                                             flags=cv2.CASCADE_SCALE_IMAGE)
+        if ((now < endCheckIn and now > startCheckIn) or (now > startCheckOut and now < endCheckOut)):
             isExport = False
-            for(x, y, w, h) in faces:
-                Id, conf = recognizer.predict(gray[y:y+h, x:x+w])
+            for (x, y, w, h) in faces:
+                Id, conf = recognizer.predict(gray[y:y + h, x:x + w])
 
                 crop_img = im[y:y + h, x:x + h]
                 img = cv2.resize(crop_img, (32, 32))
@@ -202,46 +231,46 @@ def recognize_attendence():
                 if probabilityValue > threshold:
                     if classIndex == 0:
                         cv2.rectangle(im, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                        cv2.rectangle(im, (x+w,y+h),(x,(y+h)+40), (0, 255, 0), -2)
-                        cv2.putText(im, str(get_className(classIndex)), (x,(y+h)+20), font, 1,
+                        cv2.rectangle(im, (x + w, y + h), (x, (y + h) + 40), (0, 255, 0), -2)
+                        cv2.putText(im, str(get_className(classIndex)), (x, (y + h) + 20), font, 1,
                                     (255, 255, 255), 1,
                                     cv2.LINE_AA)
                         print("Mask")
                     elif classIndex == 1:
                         cv2.rectangle(im, (x, y), (x + w, y + h), (50, 50, 255), 2)
-                        cv2.rectangle(im, (x+w,y+h),(x,(y+h)+40), (50, 50, 255), -2)
-                        cv2.putText(im, str(get_className(classIndex)), (x,(y+h)+20), font, 1,
+                        cv2.rectangle(im, (x + w, y + h), (x, (y + h) + 40), (50, 50, 255), -2)
+                        cv2.putText(im, str(get_className(classIndex)), (x, (y + h) + 20), font, 1,
                                     (255, 255, 255), 1,
                                     cv2.LINE_AA)
                         print("No Mask")
-                if (100-conf) > 50:
+                if (100 - conf) > 50:
                     # lấy tên và id
                     cv2.rectangle(im, (x, y), (x + w, y + h), (0, 255, 0), 2)
                     # aa = df.loc[df['Id'] == Id]['Name'].values
                     confstr = "  {0}%".format(round(100 - conf))
                     tt = str(Id)
 
-                    #xử lý điểm danh, lưu vào file
+                    # xử lý điểm danh, lưu vào file
                     ts = time.time()
                     date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
                     timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
                     # aa = str(aa)[2:-2] #name employee
                     mask = str(get_className(classIndex))
-                    if(now < endCheckIn and now > startCheckIn):
+                    if (now < endCheckIn and now > startCheckIn):
                         print("Da diem danh")
                         checkout = 'No'
-                        attendance.loc[len(attendance)] = [ date, Id, mask , timeStamp, checkout ]
-                    elif(now > startCheckOut and now < endCheckOut):
+                        attendance.loc[len(attendance)] = [date, Id, mask, timeStamp, checkout]
+                    elif (now > startCheckOut and now < endCheckOut):
                         print("Da checkout")
                         id = attendance.index[attendance['Id'] == Id].tolist()
-                        attendance.at[id,'Checkout'] = 'Yes'
+                        attendance.at[id, 'Checkout'] = 'Yes'
 
                     # hiển thị điểm danh thành công
                     tt = tt + " [Pass]"
                     cv2.putText(im, str(tt), (x + 5, y - 5), font, 1, (0, 255, 0), 2)
 
                     # hiển thị tên người điểm danh
-                    cv2.putText(im, str(confstr), (x + 5, y + h - 5), font,1, (0, 255, 0),1 )
+                    cv2.putText(im, str(confstr), (x + 5, y + h - 5), font, 1, (0, 255, 0), 1)
 
                 else:
                     print("CHua diem danh")
@@ -259,7 +288,7 @@ def recognize_attendence():
 
                 tt = str(tt)[2:-2]
 
-        attendance = attendance.sort_values(['Id', 'Mask'], ascending=[True,True])
+        attendance = attendance.sort_values(['Id', 'Mask'], ascending=[True, True])
         # cv2.imshow('Attendance', im)
         # open camera flask
         imgencode = cv2.imencode('.jpg', im)[1]
@@ -306,34 +335,39 @@ def recognize_attendence():
     cam.release()
     cv2.destroyAllWindows()
 
-#Attendance Route Html
+
+# Attendance Route Html
 @app.route('/attendance')
 def attendance():
     return render_template('attendance.html')
 
-#show video Attendance
+
+# show video Attendance
 @app.route('/attendanceVideo')
 def attendanceVideo():
-    return Response(recognize_attendence(),mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(recognize_attendence(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-#show video capture Image
+
+# show video capture Image
 @app.route('/captureImage')
 def video():
-    return Response(captureImage(),mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(captureImage(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-#Index Route html
+
+# Index Route html
 # @app.route('/')
 # def main():
 #     return render_template('index.html')
 
-#Capture Image Route Html
+# Capture Image Route Html
 @app.route('/create-employee')
 def capture():
     if 'username' in session:
-        return render_template('createEmployee.html', positions = positions)
+        return render_template('createEmployee.html', positions=positions)
     return redirect('/login')
 
-#Check Id isNumber or Not
+
+# Check Id isNumber or Not
 def is_number(s):
     try:
         float(s)
@@ -349,46 +383,48 @@ def is_number(s):
     return False
 
 
-#function capture Image for training
+# function capture Image for training
 def captureImage():
-        cam = cv2.VideoCapture(0)
-        harcascadePath = "haarcascade_frontalface_default.xml"
-        detector = cv2.CascadeClassifier(harcascadePath)
-        sampleNum = 0
-        while (True):
-            ret, img = cam.read()
-            img = cv2.flip(img, 1)
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            faces = detector.detectMultiScale(gray, 1.3, 5, minSize=(30, 30), flags=cv2.CASCADE_SCALE_IMAGE)
-            for (x, y, w, h) in faces:
-                cv2.rectangle(img, (x, y), (x + w, y + h), (10, 159, 255), 2)
-                # incrementing sample number
-                sampleNum = sampleNum + 1
-                # saving the captured face in the dataset folder TrainingImage
-                cv2.imwrite("TrainingImage" + os.sep + Id +'.' +
-                            str(sampleNum) + ".jpg", gray[y:y + h, x:x + w])
-                print(str(sampleNum))
-                # display the frame
-                # cv2.imshow('frame', img)
-            #open camera flask
-            imgencode = cv2.imencode('.jpg', img)[1]
-            strinData = imgencode.tostring()
-            yield (b'--frame\r\n'b'Content-Type: text/plain\r\n\r\n' + strinData + b'\r\n')
-            if sampleNum > 50:
-                break
-        cam.release()
-        cv2.destroyAllWindows()
-        res = "Images Saved for ID : " + Id
-        row = [Id]
-        with open("EmployeeIds" + os.sep + "EmployeeIds.csv", 'a+') as csvFile:
-            writer = csv.writer(csvFile)
-            writer.writerow(row)
-        csvFile.close()
+    cam = cv2.VideoCapture(0)
+    harcascadePath = "haarcascade_frontalface_default.xml"
+    detector = cv2.CascadeClassifier(harcascadePath)
+    sampleNum = 0
+    while (True):
+        ret, img = cam.read()
+        img = cv2.flip(img, 1)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        faces = detector.detectMultiScale(gray, 1.3, 5, minSize=(30, 30), flags=cv2.CASCADE_SCALE_IMAGE)
+        for (x, y, w, h) in faces:
+            cv2.rectangle(img, (x, y), (x + w, y + h), (10, 159, 255), 2)
+            # incrementing sample number
+            sampleNum = sampleNum + 1
+            # saving the captured face in the dataset folder TrainingImage
+            cv2.imwrite("TrainingImage" + os.sep + Id + '.' +
+                        str(sampleNum) + ".jpg", gray[y:y + h, x:x + w])
+            print(str(sampleNum))
+            # display the frame
+            # cv2.imshow('frame', img)
+        # open camera flask
+        imgencode = cv2.imencode('.jpg', img)[1]
+        strinData = imgencode.tostring()
+        yield (b'--frame\r\n'b'Content-Type: text/plain\r\n\r\n' + strinData + b'\r\n')
+        if sampleNum > 50:
+            break
+    cam.release()
+    cv2.destroyAllWindows()
+    res = "Images Saved for ID : " + Id
+    row = [Id]
+    with open("EmployeeIds" + os.sep + "EmployeeIds.csv", 'a+') as csvFile:
+        writer = csv.writer(csvFile)
+        writer.writerow(row)
+    csvFile.close()
 
 
-#Form to fill Id
+# Form to fill Id
 IsCapture = False
-@app.route('/capture-image',  methods=['GET', 'POST'])
+
+
+@app.route('/capture-image', methods=['GET', 'POST'])
 def captureVideo():
     if 'username' in session:
         global IsCapture
@@ -396,7 +432,7 @@ def captureVideo():
         if request.method == 'POST':
             global Id
             # Id = request.form.get("Id")
-            Id = '2021'+ str(getNextSequence('activities')['seq'])
+            Id = '2021' + str(getNextSequence('activities')['seq'])
             # print('request.form.get("AA") ', request.form.get("AA"))
             employeeInfor = {
                 'name': request.form.get('name'),
@@ -409,10 +445,17 @@ def captureVideo():
                 # 'id': request.form.get('Id'),
                 'id': Id,
             }
-            listEmployeesCol.insert_one(employeeInfor)
-            if is_number(Id):
-                return render_template('captureImage.html',empUpInfor=employeeInfor)
+
+            existing_phoneNumber = listEmployeesCol.find_one({'phoneNumber': request.form['phoneNumber']})
+            existing_email = listEmployeesCol.find_one({'email': request.form['email']})
+            if (existing_phoneNumber != None or existing_email != None):
+                return render_template('createEmployee.html', existingEmp=True, positions=positions)
+            else:
+                if is_number(Id):
+                    listEmployeesCol.insert_one(employeeInfor)
+                    return render_template('captureImage.html', empUpInfor=employeeInfor)
     return redirect('/login')
+
 
 @app.route('/update-images/<id>')
 def update_images(id):
@@ -429,6 +472,7 @@ def update_images(id):
         if is_number(Id):
             return render_template('captureImage.html', empUpInfor=empUpInfor)
     return redirect('/login')
+
 
 def getImagesAndLabels(path):
     # get the path of all the files in the folder
@@ -454,50 +498,55 @@ def getImagesAndLabels(path):
 
 
 # ----------- train images function ---------------
-@app.route('/trainImage', methods = ['GET', 'POST'])
+@app.route('/trainImage', methods=['GET', 'POST'])
 def TrainImages():
     recognizer = cv2.face_LBPHFaceRecognizer.create()
     harcascadePath = "haarcascade_frontalface_default.xml"
     detector = cv2.CascadeClassifier(harcascadePath)
     faces, Id = getImagesAndLabels("TrainingImage")
-    Thread(target = recognizer.train(faces, np.array(Id))).start()
+    Thread(target=recognizer.train(faces, np.array(Id))).start()
     # Below line is optional for a visual counter effect
     # Thread(target = counter_img("TrainingImage")).start()
-    recognizer.write("TrainingImageLabel"+os.sep+"Trainner.yml")
+    recognizer.write("TrainingImageLabel" + os.sep + "Trainner.yml")
     print("All Images")
     return redirect('/')
 
-@app.route('/register', methods=['POST','GET'])
+
+@app.route('/register', methods=['POST', 'GET'])
 def register():
     if request.method == 'POST':
         existing_username = admin.find_one({'name': request.form['username']})
         existing_useremail = admin.find_one({'email': request.form['email']})
-        if (existing_username is None) and (existing_useremail is None) and (str(request.form['password'])==str(request.form['confirmPassword'])) :
+        if (existing_username is None) and (existing_useremail is None) and (
+                str(request.form['password']) == str(request.form['confirmPassword'])):
             hashpass = hashlib.md5(request.form['password'].encode('utf-8')).hexdigest()
-            admin.insert({'name': request.form['username'],'email': request.form['email'], 'password':hashpass})
+            admin.insert({'name': request.form['username'], 'email': request.form['email'], 'password': hashpass})
             session['username'] = request.form['username']
             return redirect('/login')
 
-        return 'That username already exists!'
+        return render_template('register.html', registerFail=True)
 
     return render_template('register.html')
 
-@app.route('/login', methods=['POST','GET'])
+
+@app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-        login_user = admin.find_one({'name' : request.form['username']})
+        login_user = admin.find_one({'name': request.form['username']})
         if login_user:
             if login_user['password'] == hashlib.md5(request.form['password'].encode('utf-8')).hexdigest():
                 session['username'] = request.form['username']
                 return redirect(url_for('list_employees'))
-        return render_template('login.html')
+        return render_template('login.html', loginFail=True)
 
     return render_template('login.html')
 
+
 @app.route('/logout')
 def logout():
-	session.pop('username', None)
-	return redirect('/login')
+    session.pop('username', None)
+    return redirect('/login')
+
 
 if __name__ == "__main__":
     app.secret_key = 'super secret key'

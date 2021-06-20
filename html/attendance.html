@@ -1,41 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title> SAMS </title>
-<link rel="ICON" href="{{ url_for('static',filename='images/icon.ico') }}" type="image/ico" />
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
-<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <title> SAMS </title>
+    <link rel="ICON" href="{{ url_for('static',filename='images/icon.ico') }}" type="image/ico"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
 
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/owl.carousel.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/owl.carousel.min.css') }}">
 
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/bootstrap.min.css') }}">
 
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
 
 
 </head>
 <body class="attendanceBackground">
-    <div class="container-fluid ">
+<div class="container-fluid ">
 
-        <div class="row">
-            <div class="container">
-                <div class="row">
-                    <h2  class="text-center mb-2" style="color: white;">SMART ATTENDANCE MANAGEMENT SYSTEM</h2>
-                    <div class="col-12 mt-2">
-                        <div class="gradient-border" id="box"><img style="width: 100%" src="{{ url_for('attendanceVideo') }}"></div>
-                    </div>
+    <div class="row">
+        <div class="container">
+            <div class="row">
+                <h2 class="text-center mb-2" style="color: white;">SMART ATTENDANCE MANAGEMENT SYSTEM</h2>
+                <div class="col-12 mt-2">
+                    <div class="gradient-border" id="box"><img style="width: 100%"
+                                                               src="{{ url_for('attendanceVideo') }}"></div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
 </body>

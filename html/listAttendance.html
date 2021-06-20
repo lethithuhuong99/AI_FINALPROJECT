@@ -1,135 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title> SAMS </title>
-<link rel="ICON" href="{{ url_for('static',filename='images/icon.ico') }}" type="image/ico" />
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
-<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <title> SAMS </title>
+    <link rel="ICON" href="{{ url_for('static',filename='images/icon.ico') }}" type="image/ico"/>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
+    <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
 
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/owl.carousel.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/owl.carousel.min.css') }}">
 
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/bootstrap.min.css') }}">
 
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
 
 
 </head>
 <body>
-    <header class="site-navbar" role="banner">
-      <div class="container-fluid menu" style="padding: 10px 20px 10px 20px">
-            <div class="row">
-              <div class="col-1 " style="padding-top: 5px;">
-                  <img  src = "/static/images/logo.png">
-              </div>
+<header class="site-navbar" role="banner">
+    <div class="container-fluid menu" style="padding: 10px 20px 10px 20px">
+        <div class="row">
+            <div class="col-1 " style="padding-top: 5px;">
+                <img src="/static/images/logo.png">
+            </div>
 
-              <div class="col-6">
+            <div class="col-6">
                 <nav class="site-navigation position-relative text-right" role="navigation">
-                  <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
-                    <li><a href="{{ url_for('list_employees') }}" ><span>Employees</span></a></li>
-                    <li><a href="{{ url_for('list_attendance') }}" ><span>Attendance</span></a></li>
-                    <li><a href="/attendance" target="_blank"><span>Show Attendance</span></a></li>
+                    <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
+                        <li><a href="{{ url_for('list_employees') }}"><span>Employees</span></a></li>
+                        <li><a href="{{ url_for('list_attendance') }}"><span>Attendance</span></a></li>
+                        <li><a href="/attendance" target="_blank"><span>Show Attendance</span></a></li>
 
-                  </ul>
+                    </ul>
                 </nav>
-              </div>
+            </div>
 
-              <div class="col-5">
+            <div class="col-5">
                 <nav class="site-navigation position-relative text-right" role="navigation">
-                  <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
-                    <li style="pointer-events: none"><a href="{{ url_for('list_attendance') }}" ><span>{{session.username}}</span></a></li>
-                                        <li><a href="#myModal2" data-toggle="modal" data-target="#myModal2"><span>LogOut</span></a>
-                        <div class="modal fade" id="myModal2" role="dialog">
-                            <div class="modal-dialog">
+                    <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
+                        <li style="pointer-events: none"><a href="{{ url_for('list_attendance') }}"><span>{{session.username}}</span></a>
+                        </li>
+                        <li><a href="#myModal2" data-toggle="modal" data-target="#myModal2"><span>LogOut</span></a>
+                            <div class="modal fade" id="myModal2" role="dialog">
+                                <div class="modal-dialog">
 
-                              <!-- Modal content-->
-                              <div class="modal-content">
-                                <div class="modal-header"  style="background-color: rgba(255, 0, 0, 0.8)">
-                                  <h4 class="modal-title" style="color: white">Logout</h4>
-                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background-color: rgba(255, 0, 0, 0.8)">
+                                            <h4 class="modal-title" style="color: white">Logout</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
 
+                                        </div>
+                                        <div class="modal-body">
+                                            <p style="color: black;text-align: left">Do you want to logout?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a href="/logout" class="btn btn-sm btn-outline-danger"><span>LogOut</span></a>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="modal-body" >
-                                  <p style="color: black;text-align: left">Do you want to logout?</p>
-                                </div>
-                                <div class="modal-footer">
-                                  <a href="/logout" class="btn btn-sm btn-outline-danger" ><span>LogOut</span></a>
-                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                </div>
-                              </div>
                             </div>
-                          </div>
-                    </li>
-                  </ul>
+                        </li>
+                    </ul>
                 </nav>
-              </div>
-          </div>
-      </div>
+            </div>
+        </div>
+    </div>
 
-      <div class="container">
+    <div class="container">
         <div class="row ">
-          <div class="col-12 " style="margin-top: 120px">
-            <h2 style="color: white"> List Attendances </h2>
+            <div class="col-12 " style="margin-top: 120px">
+                <h2 style="color: white"> List Attendances </h2>
 
-    <table class="table table-striped table-bordered " style="background-color: white!important;" id="sortTable">
-    <thead>
-       <tr>
-            <th>No.</th>
-            <th>Date</th>
-            <th>EmpID</th>
-            <th>Name</th>
-            <th>Mask</th>
-            <th>CheckIn</th>
-            <th>CheckOut</th>
-        </tr>
-    </thead>
-    <tbody>
+                <table class="table table-striped table-bordered " style="background-color: white!important;"
+                       id="sortTable">
+                    <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Date</th>
+                        <th>EmpID</th>
+                        <th>Name</th>
+                        <th>Mask</th>
+                        <th>CheckIn</th>
+                        <th>CheckOut</th>
+                    </tr>
+                    </thead>
+                    <tbody>
 
-        {%for i in range(0, len)%}
-            {% if( listAttendance[i].empDetail |length  > 0) %}
-                <tr >
-                    <td>{{ i +1}}</td>
-                    <td>{{ listAttendance[i].date }}</td>
-                    <td>{{ listAttendance[i].userId}}</td>
-                    <td>{{ listAttendance[i].empDetail[0].name }}</td>
-                    <td>{{ listAttendance[i].mask }}</td>
-                    <td>{{ listAttendance[i].checkIn}}</td>
-                    <td>{{ listAttendance[i].checkOut }}</td>
-                </tr>
-            {%endif%}
-        {% endfor %}
-    </tbody>
-    <tfoot>
-        <tr>
-            <th>No.</th>
-            <th>Date</th>
-            <th>EmpID</th>
-            <th>Name</th>
-            <th>Mask</th>
-            <th>CheckIn</th>
-            <th>CheckOut</th>
-        </tr>
-    </tfoot>
-    </table>
-          </div>
+                    {%for i in range(0, len)%}
+                    {% if( listAttendance[i].empDetail |length > 0) %}
+                    <tr>
+                        <td>{{ i +1}}</td>
+                        <td>{{ listAttendance[i].date }}</td>
+                        <td>{{ listAttendance[i].userId}}</td>
+                        <td>{{ listAttendance[i].empDetail[0].name }}</td>
+                        <td>{{ listAttendance[i].mask }}</td>
+                        <td>{{ listAttendance[i].checkIn}}</td>
+                        <td>{{ listAttendance[i].checkOut }}</td>
+                    </tr>
+                    {%endif%}
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th>No.</th>
+                        <th>Date</th>
+                        <th>EmpID</th>
+                        <th>Name</th>
+                        <th>Mask</th>
+                        <th>CheckIn</th>
+                        <th>CheckOut</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
 
 
-          <div class="d-inline-block d-xl-none ml-md-0 mr-auto py-3" style="position: relative; top: 3px;"><a href="#" class="site-menu-toggle js-menu-toggle text-white"><span class="icon-menu h3"></span></a></div>
-
-          </div>
+            <div class="d-inline-block d-xl-none ml-md-0 mr-auto py-3" style="position: relative; top: 3px;"><a href="#"
+                                                                                                                class="site-menu-toggle js-menu-toggle text-white"><span
+                    class="icon-menu h3"></span></a></div>
 
         </div>
-      </div>
 
-    </header>
-        <div class="hero" style="background-image: url('/static/images/image2.jpeg'); height: 1500px; opacity: 0.8;  background-attachment: fixed; background-size: cover;  "></div>
+    </div>
+    </div>
+
+</header>
+<div class="hero"
+     style="background-image: url('/static/images/image2.jpeg'); height: 1500px; opacity: 0.8;  background-attachment: fixed; background-size: cover;  "></div>
 
 <script type="text/javascript" src="{{ url_for('static',filename='styles/popper.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static',filename='styles/bootstrap.min.js') }}"></script>
@@ -138,6 +144,7 @@
 
 <script>
 $('#sortTable').DataTable();
+
 </script>
 <script>
         $(function () {
@@ -146,6 +153,7 @@ $('#sortTable').DataTable();
     $nav.toggleClass('scrolled', $(this).scrollTop() > $nav.height());
   });
 });
-    </script>
+
+</script>
 </body>
 </html>
