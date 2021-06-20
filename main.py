@@ -179,8 +179,8 @@ def recognize_attendence():
         im = cv2.flip(im,1)
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         now = datetime.datetime.now()
-        hour = 11
-        minute = 37
+        hour = 12
+        minute = 2
         startCheckIn = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
         endCheckIn = now.replace(hour=hour, minute=minute, second=20, microsecond=0)
         startCheckOut = now.replace(hour=hour, minute=minute, second=30, microsecond=0)
