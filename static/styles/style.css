@@ -682,7 +682,7 @@ div#myModal, div#myModal2{
   font-size: 2.5rem;
 }
 .gradient-border {
-  --borderWidth: 10px;
+  --borderWidth: 7px;
   background: #1D1F20;
   position: relative;
   border-radius: var(--borderWidth);
