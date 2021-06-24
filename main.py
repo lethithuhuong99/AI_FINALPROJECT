@@ -207,8 +207,8 @@ def recognize_attendence():
         im = cv2.flip(im, 1)
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         now = datetime.datetime.now()
-        hour = 12
-        minute = 18
+        hour = 15
+        minute = 30
         startCheckIn = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
         endCheckIn = now.replace(hour=hour, minute=minute, second=20, microsecond=0)
         startCheckOut = now.replace(hour=hour, minute=minute, second=30, microsecond=0)
@@ -249,6 +249,15 @@ def recognize_attendence():
                     # aa = df.loc[df['Id'] == Id]['Name'].values
                     confstr = "  {0}%".format(round(100 - conf))
                     tt = str(Id)
+                    # get information employee
+
+                    empInfor = listEmployeesCol.find_one({'id': str(Id)})
+                    if(empInfor!=None):
+                        cv2.putText(im, str(tt), (x + 405, y - 110), font, 1, (0, 255, 0), 2)
+                        cv2.putText(im,  empInfor['name'], (x + 405, y - 55), font, 1, (0, 255, 0), 2)
+                        cv2.putText(im, empInfor['gender'], (x + 405, y - 5), font, 1, (0, 255, 0), 2)
+                        cv2.putText(im, empInfor['dateOfBirth'], (x + 405, y + 45), font, 1, (0, 255, 0), 2)
+                        cv2.putText(im, empInfor['position'], (x + 405, y + 90), font, 1, (0, 255, 0), 2)
 
                     # xử lý điểm danh, lưu vào file
                     ts = time.time()
@@ -257,11 +266,11 @@ def recognize_attendence():
                     # aa = str(aa)[2:-2] #name employee
                     mask = str(get_className(classIndex))
                     if (now < endCheckIn and now > startCheckIn):
-                        print("Da diem danh")
+                        # print("Da diem danh")
                         checkout = 'No'
                         attendance.loc[len(attendance)] = [date, Id, mask, timeStamp, checkout]
                     elif (now > startCheckOut and now < endCheckOut):
-                        print("Da checkout")
+                        # print("Da checkout")
                         id = attendance.index[attendance['Id'] == Id].tolist()
                         attendance.at[id, 'Checkout'] = 'Yes'
 
@@ -273,7 +282,7 @@ def recognize_attendence():
                     cv2.putText(im, str(confstr), (x + 5, y + h - 5), font, 1, (0, 255, 0), 1)
 
                 else:
-                    print("CHua diem danh")
+                    # print("CHua diem danh")
                     # không lấy tên và id
                     cv2.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)
                     Id = '  Unknown  '
