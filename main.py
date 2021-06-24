@@ -207,8 +207,8 @@ def recognize_attendence():
         im = cv2.flip(im, 1)
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         now = datetime.datetime.now()
-        hour = 15
-        minute = 30
+        hour = 17
+        minute = 54
         startCheckIn = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
         endCheckIn = now.replace(hour=hour, minute=minute, second=20, microsecond=0)
         startCheckOut = now.replace(hour=hour, minute=minute, second=30, microsecond=0)
@@ -230,22 +230,24 @@ def recognize_attendence():
 
                 if probabilityValue > threshold:
                     if classIndex == 0:
-                        cv2.rectangle(im, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                        cv2.rectangle(im, (x + w, y + h), (x, (y + h) + 40), (0, 255, 0), -2)
-                        cv2.putText(im, str(get_className(classIndex)), (x, (y + h) + 20), font, 1,
-                                    (255, 255, 255), 1,
+                        cv2.rectangle(im, (x + 400, y - 150), (x + w + 400, y + h - 150), (0, 255, 0), 2)
+                        cv2.rectangle(im, (x + w +400, y + h -150), (x + 400, (y + h) + 40 -150), (0, 255, 0), -2)
+                        cv2.putText(im, str(get_className(classIndex)), (x+400, (y + h) + 20-135), font, 1,
+                                    (255, 255, 255), 2,
                                     cv2.LINE_AA)
                         print("Mask")
                     elif classIndex == 1:
-                        cv2.rectangle(im, (x, y), (x + w, y + h), (50, 50, 255), 2)
-                        cv2.rectangle(im, (x + w, y + h), (x, (y + h) + 40), (50, 50, 255), -2)
-                        cv2.putText(im, str(get_className(classIndex)), (x, (y + h) + 20), font, 1,
-                                    (255, 255, 255), 1,
+                        cv2.rectangle(im, (x + 400, y - 150), (x + w + 400, y + h - 150), (50, 50, 255), 2)
+                        cv2.rectangle(im, (x + w +400, y + h -150), (x + 400, (y + h) + 40 -150), (50, 50, 255), -2)
+                        cv2.putText(im, str(get_className(classIndex)), (x+400, (y + h) -115), font, 1,
+                                    (255, 255, 255), 2,
                                     cv2.LINE_AA)
                         print("No Mask")
                 if (100 - conf) > 50:
                     # lấy tên và id
-                    cv2.rectangle(im, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                    cv2.rectangle(im, (x + 400, y - 150), (x + w + 400, y + h - 150), (0, 255, 0), 2)
+                    cv2.rectangle(im, (x , y ), (x + w , y + h ), (10, 159, 255), 2)
+
                     # aa = df.loc[df['Id'] == Id]['Name'].values
                     confstr = "  {0}%".format(round(100 - conf))
                     tt = str(Id)
@@ -253,7 +255,7 @@ def recognize_attendence():
 
                     empInfor = listEmployeesCol.find_one({'id': str(Id)})
                     if(empInfor!=None):
-                        cv2.putText(im, str(tt), (x + 405, y - 110), font, 1, (0, 255, 0), 2)
+                        # cv2.putText(im, str(tt), (x + 405, y - 110), font, 1, (0, 255, 0), 2)
                         cv2.putText(im,  empInfor['name'], (x + 405, y - 55), font, 1, (0, 255, 0), 2)
                         cv2.putText(im, empInfor['gender'], (x + 405, y - 5), font, 1, (0, 255, 0), 2)
                         cv2.putText(im, empInfor['dateOfBirth'], (x + 405, y + 45), font, 1, (0, 255, 0), 2)
@@ -275,16 +277,16 @@ def recognize_attendence():
                         attendance.at[id, 'Checkout'] = 'Yes'
 
                     # hiển thị điểm danh thành công
-                    tt = tt + " [Pass]"
-                    cv2.putText(im, str(tt), (x + 5, y - 5), font, 1, (0, 255, 0), 2)
+                    # tt = tt + " [Pass]"
+                    # cv2.putText(im, str(tt), (x + 5, y - 5), font, 1, (0, 255, 0), 2)
 
                     # hiển thị tên người điểm danh
-                    cv2.putText(im, str(confstr), (x + 5, y + h - 5), font, 1, (0, 255, 0), 1)
+                    cv2.putText(im, str(tt), (x + 405, y - 110), font, 1, (0, 255, 0), 2)
 
                 else:
                     # print("CHua diem danh")
                     # không lấy tên và id
-                    cv2.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)
+                    cv2.rectangle(im, (x + 400, y - 150), (x + w + 400, y + h - 150), (255, 0, 0), 2)
                     Id = '  Unknown  '
                     tt = str(Id)
                     confstr = "  {0}%".format(round(100 - conf))
