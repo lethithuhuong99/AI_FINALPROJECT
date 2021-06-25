@@ -241,9 +241,10 @@ def recognize_attendence():
 
         if ((now < endCheckIn and now > startCheckIn) or (now > startCheckOut and now < endCheckOut)):
             isExport = False
+            isFace = False
             for (x, y, w, h) in faces:
                 Id, conf = recognizer.predict(gray[y:y + h, x:x + w])
-
+                isFace = True
                 crop_img = im[y:y + h, x:x + h]
                 img = cv2.resize(crop_img, (32, 32))
                 img = preprocessing(img)
@@ -321,6 +322,8 @@ def recognize_attendence():
                 #     cv2.putText(im, str(confstr), (x + 5, y + h - 5), font, 1, (0, 0, 255), 1)
 
                 # tt = str(tt)[2:-2]
+            if(isFace == False):
+                empInformation = {'Id': '', 'name': '', 'gender': '', 'dateOfBirth': '', 'position': '', 'mask': ''}
 
         attendance = attendance.sort_values(['Id', 'Mask'], ascending=[True, True])
         # cv2.imshow('Attendance', im)
