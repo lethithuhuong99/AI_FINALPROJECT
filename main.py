@@ -27,7 +27,7 @@ myclient = pymongo.MongoClient(
 mydb = myclient['employees']
 mycol = mydb['attendancedbs']
 # delete all attendance
-# mycol.delete_many({})
+mycol.delete_many({})
 listEmployeesCol = mydb['employeedbs']
 countersCol = mydb['counters']
 admin = mydb['admin']
@@ -201,20 +201,44 @@ def recognize_attendence():
     # Define min window size to be recognized as a face
     minW = 0.1 * cam.get(3)
     minH = 0.1 * cam.get(4)
+    empInformation = {'Id': '', 'name': '', 'gender': '', 'dateOfBirth': '' , 'position' :'', 'mask' : ''}
+
 
     while True:
         ret, im = cam.read()
         im = cv2.flip(im, 1)
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         now = datetime.datetime.now()
-        hour = 17
-        minute = 54
+        hour = 22
+        minute = 18
         startCheckIn = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
         endCheckIn = now.replace(hour=hour, minute=minute, second=20, microsecond=0)
         startCheckOut = now.replace(hour=hour, minute=minute, second=30, microsecond=0)
         endCheckOut = now.replace(hour=hour, minute=minute, second=50, microsecond=0)
         faces = faceCascade.detectMultiScale(gray, 1.2, 5, minSize=(int(minW), int(minH)),
                                              flags=cv2.CASCADE_SCALE_IMAGE)
+
+        if(empInformation['Id'] != ''):
+            cv2.rectangle(im, (5, 5), (480, 300) ,(0, 0, 0), -1)
+            cv2.putText(im, 'HAVE A NICE DAY!', (100, 280), font, 1, (0, 255, 255), 2)
+
+            if(now < endCheckIn and now > startCheckIn):
+                cv2.putText(im, 'WELCOME!', (160, 50), font, 1, (0, 255, 255), 2)
+            else:
+                if(now < startCheckOut):
+                    empInformation = {'Id': '', 'name': '', 'gender': '', 'dateOfBirth': '', 'position': '', 'mask': ''}
+            if (now > startCheckOut and now < endCheckOut):
+                cv2.putText(im, 'GOOD BYE!', (150, 50), font, 1, (0, 255, 255), 2)
+            else:
+                if(now >= endCheckOut):
+                    empInformation = {'Id': '', 'name': '', 'gender': '', 'dateOfBirth': '', 'position': '', 'mask': ''}
+        cv2.putText(im, empInformation['Id'], (50, 90), font, 0.8, (255, 255, 255), 1)
+        cv2.putText(im, empInformation['name'], (50, 120), font, 0.8, (255, 255, 255), 1)
+        cv2.putText(im, empInformation['gender'], (50, 150), font, 0.8, (255, 255, 255), 1)
+        cv2.putText(im, empInformation['dateOfBirth'], (50, 180), font, 0.8, (255, 255, 255), 1)
+        cv2.putText(im, empInformation['position'], (50, 210), font, 0.8, (255, 255, 255), 1)
+        cv2.putText(im, empInformation['mask'], (50, 240), font, 0.8, (255, 255, 255), 1)
+
         if ((now < endCheckIn and now > startCheckIn) or (now > startCheckOut and now < endCheckOut)):
             isExport = False
             for (x, y, w, h) in faces:
@@ -230,36 +254,34 @@ def recognize_attendence():
 
                 if probabilityValue > threshold:
                     if classIndex == 0:
-                        cv2.rectangle(im, (x + 400, y - 150), (x + w + 400, y + h - 150), (0, 255, 0), 2)
-                        cv2.rectangle(im, (x + w +400, y + h -150), (x + 400, (y + h) + 40 -150), (0, 255, 0), -2)
-                        cv2.putText(im, str(get_className(classIndex)), (x+400, (y + h) + 20-135), font, 1,
-                                    (255, 255, 255), 2,
-                                    cv2.LINE_AA)
+                        # cv2.rectangle(im, (x + 400, y - 150), (x + w + 400, y + h - 150), (0, 255, 0), 2)
+                        # cv2.rectangle(im, (x + w +400, y + h -150), (x + 400, (y + h) + 40 -150), (0, 255, 0), -2)
+                        # cv2.putText(im, str(get_className(classIndex)), (x+400, (y + h) + 20-135), font, 1,
+                        #             (255, 255, 255), 2,
+                        #             cv2.LINE_AA)
                         print("Mask")
+                        empInformation['mask'] = 'Mask: Yes'
                     elif classIndex == 1:
-                        cv2.rectangle(im, (x + 400, y - 150), (x + w + 400, y + h - 150), (50, 50, 255), 2)
-                        cv2.rectangle(im, (x + w +400, y + h -150), (x + 400, (y + h) + 40 -150), (50, 50, 255), -2)
-                        cv2.putText(im, str(get_className(classIndex)), (x+400, (y + h) -115), font, 1,
-                                    (255, 255, 255), 2,
-                                    cv2.LINE_AA)
+                        # cv2.rectangle(im, (x + 400, y - 150), (x + w + 400, y + h - 150), (50, 50, 255), 2)
+                        # cv2.rectangle(im, (x + w +400, y + h -150), (x + 400, (y + h) + 40 -150), (50, 50, 255), -2)
+                        # cv2.putText(im, str(get_className(classIndex)), (x+400, (y + h) -115), font, 1,
+                        #             (255, 255, 255), 2,
+                        #             cv2.LINE_AA)
                         print("No Mask")
+                        empInformation['mask'] = 'Mask: No'
+
                 if (100 - conf) > 50:
                     # lấy tên và id
-                    cv2.rectangle(im, (x + 400, y - 150), (x + w + 400, y + h - 150), (0, 255, 0), 2)
-                    cv2.rectangle(im, (x , y ), (x + w , y + h ), (10, 159, 255), 2)
-
-                    # aa = df.loc[df['Id'] == Id]['Name'].values
                     confstr = "  {0}%".format(round(100 - conf))
-                    tt = str(Id)
-                    # get information employee
 
                     empInfor = listEmployeesCol.find_one({'id': str(Id)})
+
                     if(empInfor!=None):
-                        # cv2.putText(im, str(tt), (x + 405, y - 110), font, 1, (0, 255, 0), 2)
-                        cv2.putText(im,  empInfor['name'], (x + 405, y - 55), font, 1, (0, 255, 0), 2)
-                        cv2.putText(im, empInfor['gender'], (x + 405, y - 5), font, 1, (0, 255, 0), 2)
-                        cv2.putText(im, empInfor['dateOfBirth'], (x + 405, y + 45), font, 1, (0, 255, 0), 2)
-                        cv2.putText(im, empInfor['position'], (x + 405, y + 90), font, 1, (0, 255, 0), 2)
+                        empInformation['Id'] = 'Id: ' + str(Id)
+                        empInformation['name'] = 'Name: ' + empInfor['name']
+                        empInformation['gender'] = 'Gender: ' + empInfor['gender']
+                        empInformation['dateOfBirth'] = 'DOB: ' + empInfor['dateOfBirth']
+                        empInformation['position'] = 'Position: ' + empInfor['position']
 
                     # xử lý điểm danh, lưu vào file
                     ts = time.time()
@@ -281,23 +303,24 @@ def recognize_attendence():
                     # cv2.putText(im, str(tt), (x + 5, y - 5), font, 1, (0, 255, 0), 2)
 
                     # hiển thị tên người điểm danh
-                    cv2.putText(im, str(tt), (x + 405, y - 110), font, 1, (0, 255, 0), 2)
+                    # cv2.putText(im, str(tt), (x + 405, y - 110), font, 1, (0, 255, 0), 2)
 
                 else:
-                    # print("CHua diem danh")
-                    # không lấy tên và id
-                    cv2.rectangle(im, (x + 400, y - 150), (x + w + 400, y + h - 150), (255, 0, 0), 2)
-                    Id = '  Unknown  '
-                    tt = str(Id)
-                    confstr = "  {0}%".format(round(100 - conf))
+                    empInformation = {'Id': '', 'name': '', 'gender': '', 'dateOfBirth': '', 'position': '', 'mask': ''}
+                #     # print("CHua diem danh")
+                #     # không lấy tên và id
+                #     # cv2.rectangle(im, (x + 400, y - 150), (x + w + 400, y + h - 150), (255, 0, 0), 2)
+                #     Id = '  Unknown  '
+                #     tt = str(Id)
+                #     confstr = "  {0}%".format(round(100 - conf))
+                #
+                #     # điểm danh khong thành công
+                #     cv2.putText(im, str(tt), (x + 5, y - 5), font, 1, (0, 0, 255), 2)
+                #
+                #     # hiển thị unknown
+                #     cv2.putText(im, str(confstr), (x + 5, y + h - 5), font, 1, (0, 0, 255), 1)
 
-                    # điểm danh khong thành công
-                    cv2.putText(im, str(tt), (x + 5, y - 5), font, 1, (0, 0, 255), 2)
-
-                    # hiển thị unknown
-                    cv2.putText(im, str(confstr), (x + 5, y + h - 5), font, 1, (0, 0, 255), 1)
-
-                tt = str(tt)[2:-2]
+                # tt = str(tt)[2:-2]
 
         attendance = attendance.sort_values(['Id', 'Mask'], ascending=[True, True])
         # cv2.imshow('Attendance', im)
