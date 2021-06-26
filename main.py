@@ -27,7 +27,7 @@ myclient = pymongo.MongoClient(
 mydb = myclient['employees']
 mycol = mydb['attendancedbs']
 # delete all attendance
-mycol.delete_many({})
+# mycol.delete_many({})
 listEmployeesCol = mydb['employeedbs']
 countersCol = mydb['counters']
 admin = mydb['admin']
@@ -209,8 +209,8 @@ def recognize_attendence():
         im = cv2.flip(im, 1)
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         now = datetime.datetime.now()
-        hour = 22
-        minute = 18
+        hour = 21
+        minute = 9
         startCheckIn = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
         endCheckIn = now.replace(hour=hour, minute=minute, second=20, microsecond=0)
         startCheckOut = now.replace(hour=hour, minute=minute, second=30, microsecond=0)
@@ -271,7 +271,7 @@ def recognize_attendence():
                         print("No Mask")
                         empInformation['mask'] = 'Mask: No'
 
-                if (100 - conf) > 50:
+                if (100 - conf) > 70:
                     # lấy tên và id
                     confstr = "  {0}%".format(round(100 - conf))
 
@@ -445,7 +445,7 @@ def captureImage():
         imgencode = cv2.imencode('.jpg', img)[1]
         strinData = imgencode.tostring()
         yield (b'--frame\r\n'b'Content-Type: text/plain\r\n\r\n' + strinData + b'\r\n')
-        if sampleNum > 50:
+        if sampleNum >= 100:
             break
     cam.release()
     cv2.destroyAllWindows()
