@@ -1,7 +1,9 @@
 # AI_FINALPROJECT
 
 Run the project Clone project
+
 $ git clone git@github.com:lethithuhuong99/AI_FINALPROJECT.git
+
 $ cd AI_FINALPROJECT
 $ git checkout master
 
