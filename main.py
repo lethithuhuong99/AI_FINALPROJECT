@@ -3,9 +3,11 @@ import cv2
 from flask import Flask, Response, render_template, request, session, redirect, url_for
 import os
 import datetime
+from datetime import timedelta
 import time
 import pandas as pd
 import warnings
+import tkinter as tk
 
 warnings.filterwarnings('ignore')
 import numpy as np
@@ -17,6 +19,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 
 import pymongo
 import csv
+import sys
 
 # Use Flask
 app = Flask(__name__, template_folder='html')
@@ -183,6 +186,11 @@ def get_className(classNo):
         return "No Mask"
 
 
+def get_text_size(text, textfont):
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    return cv2.getTextSize(text, font, textfont, 2)[0]
+
+
 # Attendance Function
 def recognize_attendence():
     recognizer = cv2.face.LBPHFaceRecognizer_create()  # cv2.createLBPHFaceRecognizer()
@@ -201,43 +209,80 @@ def recognize_attendence():
     # Define min window size to be recognized as a face
     minW = 0.1 * cam.get(3)
     minH = 0.1 * cam.get(4)
-    empInformation = {'Id': '', 'name': '', 'gender': '', 'dateOfBirth': '' , 'position' :'', 'mask' : ''}
+    empInformation = {'Id': '', 'name': '', 'gender': '', 'dateOfBirth': '', 'position': '', 'mask': ''}
 
+    root = tk.Tk()
 
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    boxWidth = round(screen_width / 6)
+    boxHeight = round(screen_height / 5)
+    fontSizeBig = round(boxHeight / boxWidth, 2)
+    fontSize = round(round(screen_height / 8) / round(screen_width / 5), 2)
+    space = round(boxHeight / 10)
+    spaceX = round(boxWidth / 10)
+    print("screen_width", screen_width, "screen_height", screen_height)
     while True:
         ret, im = cam.read()
         im = cv2.flip(im, 1)
         gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         now = datetime.datetime.now()
-        hour = 21
-        minute = 9
-        startCheckIn = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
-        endCheckIn = now.replace(hour=hour, minute=minute, second=20, microsecond=0)
-        startCheckOut = now.replace(hour=hour, minute=minute, second=30, microsecond=0)
-        endCheckOut = now.replace(hour=hour, minute=minute, second=50, microsecond=0)
+        hourStartCheckin = int(sys.argv[1])
+        minuteStartCheckin = int(sys.argv[2])
+        hourStartCheckout = int(sys.argv[4])
+        minuteStartCheckout = int(sys.argv[5])
+
+        startCheckIn = now.replace(hour=hourStartCheckin, minute=minuteStartCheckin, second=0, microsecond=0)
+        # endCheckIn = now.replace(hour=hour, minute=minute, second=20, microsecond=0)
+        endCheckIn = (startCheckIn + timedelta(hours=0, minutes=int(sys.argv[3])))
+        startCheckOut = now.replace(hour=hourStartCheckout, minute=minuteStartCheckout, second=0, microsecond=0)
+        # endCheckOut = now.replace(hour=hour, minute=minute, second=50, microsecond=0)
+        endCheckOut = (startCheckOut + timedelta(hours=0, minutes=int(sys.argv[6])))
+
+        # print("startCheckIn: ", startCheckIn, "endCheckIn: ", endCheckIn, 'startCheckOut: ', startCheckOut, 'endCheckOut', endCheckOut)
         faces = faceCascade.detectMultiScale(gray, 1.2, 5, minSize=(int(minW), int(minH)),
                                              flags=cv2.CASCADE_SCALE_IMAGE)
 
-        if(empInformation['Id'] != ''):
-            cv2.rectangle(im, (5, 5), (480, 300) ,(0, 0, 0), -1)
-            cv2.putText(im, 'HAVE A NICE DAY!', (100, 280), font, 1, (0, 255, 255), 2)
+        if (empInformation['Id'] != ''):
+            cv2.rectangle(im, (5, 5), (boxWidth, boxHeight), (0, 0, 0), -1)
+            cv2.putText(im, 'HAVE A NICE DAY!',
+                        (5 + round((boxWidth - get_text_size('HAVE A NICE DAY!', fontSizeBig)[0]) / 2), 30 + space * 8),
+                        font,
+                        fontSizeBig,
+                        (0, 255, 255), 2)
 
-            if(now < endCheckIn and now > startCheckIn):
-                cv2.putText(im, 'WELCOME!', (160, 50), font, 1, (0, 255, 255), 2)
+            if (now < endCheckIn and now > startCheckIn):
+                cv2.putText(im, 'WELCOME!',
+                            (round((boxWidth - get_text_size('WELCOME!', fontSizeBig)[0]) / 2), 15 + space), font,
+                            fontSizeBig, (0, 255, 255), 2)
             else:
-                if(now < startCheckOut):
+                if (now < startCheckOut):
                     empInformation = {'Id': '', 'name': '', 'gender': '', 'dateOfBirth': '', 'position': '', 'mask': ''}
             if (now > startCheckOut and now < endCheckOut):
-                cv2.putText(im, 'GOOD BYE!', (150, 50), font, 1, (0, 255, 255), 2)
+                cv2.putText(im, 'GOOD BYE!',
+                            (round((boxWidth - get_text_size('GOOD BYE!', fontSizeBig)[0]) / 2), 15 + space), font,
+                            fontSizeBig, (0, 255, 255), 2)
             else:
-                if(now >= endCheckOut):
+                if (now >= endCheckOut):
                     empInformation = {'Id': '', 'name': '', 'gender': '', 'dateOfBirth': '', 'position': '', 'mask': ''}
-        cv2.putText(im, empInformation['Id'], (50, 90), font, 0.8, (255, 255, 255), 1)
-        cv2.putText(im, empInformation['name'], (50, 120), font, 0.8, (255, 255, 255), 1)
-        cv2.putText(im, empInformation['gender'], (50, 150), font, 0.8, (255, 255, 255), 1)
-        cv2.putText(im, empInformation['dateOfBirth'], (50, 180), font, 0.8, (255, 255, 255), 1)
-        cv2.putText(im, empInformation['position'], (50, 210), font, 0.8, (255, 255, 255), 1)
-        cv2.putText(im, empInformation['mask'], (50, 240), font, 0.8, (255, 255, 255), 1)
+        cv2.putText(im, empInformation['Id'], (spaceX, get_text_size(empInformation['Id'], fontSizeBig)[1] + space * 2),
+                    font,
+                    fontSize, (255, 255, 255), 1)
+        cv2.putText(im, empInformation['name'],
+                    (spaceX, get_text_size(empInformation['name'], fontSizeBig)[1] + space * 3), font,
+                    fontSize, (255, 255, 255), 1)
+        cv2.putText(im, empInformation['gender'],
+                    (spaceX, get_text_size(empInformation['gender'], fontSizeBig)[1] + space * 4),
+                    font, fontSize, (255, 255, 255), 1)
+        cv2.putText(im, empInformation['dateOfBirth'],
+                    (spaceX, get_text_size(empInformation['dateOfBirth'], fontSizeBig)[1] + space * 5), font, fontSize,
+                    (255, 255, 255), 1)
+        cv2.putText(im, empInformation['position'],
+                    (spaceX, get_text_size(empInformation['position'], fontSizeBig)[1] + space * 6),
+                    font, fontSize, (255, 255, 255), 1)
+        cv2.putText(im, empInformation['mask'],
+                    (spaceX, get_text_size(empInformation['mask'], fontSizeBig)[1] + space * 7), font,
+                    fontSize, (255, 255, 255), 1)
 
         if ((now < endCheckIn and now > startCheckIn) or (now > startCheckOut and now < endCheckOut)):
             isExport = False
@@ -255,74 +300,58 @@ def recognize_attendence():
 
                 if probabilityValue > threshold:
                     if classIndex == 0:
-                        # cv2.rectangle(im, (x + 400, y - 150), (x + w + 400, y + h - 150), (0, 255, 0), 2)
-                        # cv2.rectangle(im, (x + w +400, y + h -150), (x + 400, (y + h) + 40 -150), (0, 255, 0), -2)
-                        # cv2.putText(im, str(get_className(classIndex)), (x+400, (y + h) + 20-135), font, 1,
-                        #             (255, 255, 255), 2,
-                        #             cv2.LINE_AA)
-                        print("Mask")
+                        # print("Mask")
                         empInformation['mask'] = 'Mask: Yes'
                     elif classIndex == 1:
-                        # cv2.rectangle(im, (x + 400, y - 150), (x + w + 400, y + h - 150), (50, 50, 255), 2)
-                        # cv2.rectangle(im, (x + w +400, y + h -150), (x + 400, (y + h) + 40 -150), (50, 50, 255), -2)
-                        # cv2.putText(im, str(get_className(classIndex)), (x+400, (y + h) -115), font, 1,
-                        #             (255, 255, 255), 2,
-                        #             cv2.LINE_AA)
-                        print("No Mask")
+                        # print("No Mask")
                         empInformation['mask'] = 'Mask: No'
 
-                if (100 - conf) > 70:
+                if (100 - conf) > 50:
                     # lấy tên và id
                     confstr = "  {0}%".format(round(100 - conf))
 
                     empInfor = listEmployeesCol.find_one({'id': str(Id)})
 
-                    if(empInfor!=None):
+                    if (empInfor != None):
                         empInformation['Id'] = 'Id: ' + str(Id)
                         empInformation['name'] = 'Name: ' + empInfor['name']
                         empInformation['gender'] = 'Gender: ' + empInfor['gender']
                         empInformation['dateOfBirth'] = 'DOB: ' + empInfor['dateOfBirth']
                         empInformation['position'] = 'Position: ' + empInfor['position']
 
-                    # xử lý điểm danh, lưu vào file
+                    # process attendance, save to file
                     ts = time.time()
                     date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d')
                     timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
                     # aa = str(aa)[2:-2] #name employee
                     mask = str(get_className(classIndex))
                     if (now < endCheckIn and now > startCheckIn):
-                        # print("Da diem danh")
+                        # print("attendanced")
                         checkout = 'No'
                         attendance.loc[len(attendance)] = [date, Id, mask, timeStamp, checkout]
                     elif (now > startCheckOut and now < endCheckOut):
-                        # print("Da checkout")
+                        # print("checkouted")
                         id = attendance.index[attendance['Id'] == Id].tolist()
                         attendance.at[id, 'Checkout'] = 'Yes'
 
-                    # hiển thị điểm danh thành công
-                    # tt = tt + " [Pass]"
-                    # cv2.putText(im, str(tt), (x + 5, y - 5), font, 1, (0, 255, 0), 2)
-
-                    # hiển thị tên người điểm danh
-                    # cv2.putText(im, str(tt), (x + 405, y - 110), font, 1, (0, 255, 0), 2)
 
                 else:
                     empInformation = {'Id': '', 'name': '', 'gender': '', 'dateOfBirth': '', 'position': '', 'mask': ''}
-                #     # print("CHua diem danh")
-                #     # không lấy tên và id
+                #     # print("attendance failed ")
+                #     # dont get name and id
                 #     # cv2.rectangle(im, (x + 400, y - 150), (x + w + 400, y + h - 150), (255, 0, 0), 2)
                 #     Id = '  Unknown  '
                 #     tt = str(Id)
                 #     confstr = "  {0}%".format(round(100 - conf))
                 #
-                #     # điểm danh khong thành công
+                #     # attendance failed
                 #     cv2.putText(im, str(tt), (x + 5, y - 5), font, 1, (0, 0, 255), 2)
                 #
                 #     # hiển thị unknown
                 #     cv2.putText(im, str(confstr), (x + 5, y + h - 5), font, 1, (0, 0, 255), 1)
 
                 # tt = str(tt)[2:-2]
-            if(isFace == False):
+            if (isFace == False):
                 empInformation = {'Id': '', 'name': '', 'gender': '', 'dateOfBirth': '', 'position': '', 'mask': ''}
 
         attendance = attendance.sort_values(['Id', 'Mask'], ascending=[True, True])
@@ -438,7 +467,7 @@ def captureImage():
             # saving the captured face in the dataset folder TrainingImage
             cv2.imwrite("TrainingImage" + os.sep + Id + '.' +
                         str(sampleNum) + ".jpg", gray[y:y + h, x:x + w])
-            print(str(sampleNum))
+            # print(str(sampleNum))
             # display the frame
             # cv2.imshow('frame', img)
         # open camera flask
@@ -545,7 +574,7 @@ def TrainImages():
     # Below line is optional for a visual counter effect
     # Thread(target = counter_img("TrainingImage")).start()
     recognizer.write("TrainingImageLabel" + os.sep + "Trainner.yml")
-    print("All Images")
+    print("Trained All Images")
     return redirect('/')
 
 
