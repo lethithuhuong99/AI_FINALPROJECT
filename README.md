@@ -1,6 +1,6 @@
 # AI_FINALPROJECT
 
-Run the project Clone project
+**Run the project Clone project**
 
 $ git clone git@github.com:lethithuhuong99/AI_FINALPROJECT.git
 
@@ -8,11 +8,9 @@ $ cd AI_FINALPROJECT
 
 $ git checkout master
 
-Run project in real time:
-
 $ python main.py <argv[1]> <argv[2]> <argv[3]> <argv[4]> <argv[5]> <argv[6]>
 
-Note:
+**Note:**
 
   <argv[1]>: Hour Start Checkin
   
