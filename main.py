@@ -6,6 +6,7 @@ from datetime import timedelta
 import time
 import pandas as pd
 import warnings
+import tkinter as tk
 from screeninfo import get_monitors
 
 warnings.filterwarnings('ignore')
@@ -210,8 +211,11 @@ def recognize_attendence():
     minH = 0.1 * cam.get(4)
     empInformation = {'Id': '', 'name': '', 'gender': '', 'dateOfBirth': '', 'position': '', 'mask': ''}
 
-    screen_width = get_monitors()[0].width
-    screen_height = get_monitors()[0].height
+    # screen_width = get_monitors()[0].width
+    # screen_height = get_monitors()[0].height
+    root = tk.Tk()
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
     boxWidth = round(screen_width / 6)
     boxHeight = round(screen_height / 5)
     fontSizeBig = round(boxHeight / (boxWidth*1.5), 2)
