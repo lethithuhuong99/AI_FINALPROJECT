@@ -1,4 +1,3 @@
-import bcrypt
 import cv2
 from flask import Flask, Response, render_template, request, session, redirect, url_for
 import os
@@ -7,7 +6,7 @@ from datetime import timedelta
 import time
 import pandas as pd
 import warnings
-import tkinter as tk
+from screeninfo import get_monitors
 
 warnings.filterwarnings('ignore')
 import numpy as np
@@ -211,17 +210,15 @@ def recognize_attendence():
     minH = 0.1 * cam.get(4)
     empInformation = {'Id': '', 'name': '', 'gender': '', 'dateOfBirth': '', 'position': '', 'mask': ''}
 
-    root = tk.Tk()
-
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
+    screen_width = get_monitors()[0].width
+    screen_height = get_monitors()[0].height
     boxWidth = round(screen_width / 6)
     boxHeight = round(screen_height / 5)
-    fontSizeBig = round(boxHeight / boxWidth, 2)
+    fontSizeBig = round(boxHeight / (boxWidth*1.5), 2)
     fontSize = round(round(screen_height / 8) / round(screen_width / 5), 2)
     space = round(boxHeight / 10)
     spaceX = round(boxWidth / 10)
-    print("screen_width", screen_width, "screen_height", screen_height)
+    # print("screen_width", screen_width, "screen_height", screen_height)
     while True:
         ret, im = cam.read()
         im = cv2.flip(im, 1)
@@ -246,21 +243,21 @@ def recognize_attendence():
         if (empInformation['Id'] != ''):
             cv2.rectangle(im, (5, 5), (boxWidth, boxHeight), (0, 0, 0), -1)
             cv2.putText(im, 'HAVE A NICE DAY!',
-                        (5 + round((boxWidth - get_text_size('HAVE A NICE DAY!', fontSizeBig)[0]) / 2), 30 + space * 8),
+                        (5 + round((boxWidth - get_text_size('HAVE A NICE DAY!', fontSizeBig)[0]) / 2), 20 + space * 8),
                         font,
                         fontSizeBig,
                         (0, 255, 255), 2)
 
             if (now < endCheckIn and now > startCheckIn):
                 cv2.putText(im, 'WELCOME!',
-                            (round((boxWidth - get_text_size('WELCOME!', fontSizeBig)[0]) / 2), 15 + space), font,
+                            (round((boxWidth - get_text_size('WELCOME!', fontSizeBig)[0]) / 2), 5 + space), font,
                             fontSizeBig, (0, 255, 255), 2)
             else:
                 if (now < startCheckOut):
                     empInformation = {'Id': '', 'name': '', 'gender': '', 'dateOfBirth': '', 'position': '', 'mask': ''}
             if (now > startCheckOut and now < endCheckOut):
                 cv2.putText(im, 'GOOD BYE!',
-                            (round((boxWidth - get_text_size('GOOD BYE!', fontSizeBig)[0]) / 2), 15 + space), font,
+                            (round((boxWidth - get_text_size('GOOD BYE!', fontSizeBig)[0]) / 2), 5 + space), font,
                             fontSizeBig, (0, 255, 255), 2)
             else:
                 if (now >= endCheckOut):
